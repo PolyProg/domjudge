@@ -79,6 +79,13 @@ if ( IS_ADMIN && !empty($cmd) ):
 	echo "</td></tr>\n";
 
 ?>
+<tr><td><label for="data_0__depends_">Depends on:</label></td>
+<td><?php
+$pidmap = $DB->q("KEYVALUETABLE SELECT probid,probid as pid FROM problem ORDER BY probid");
+$pidmap['']='(NULL)';
+echo addSelect('data[0][depends]', $pidmap, @$row['depends'], true);
+?>
+</td></tr>
 <tr><td><label for="data_0__cid_">Contest:</label></td>
 <td><?php
 $cmap = $DB->q("KEYVALUETABLE SELECT cid,contestname FROM contest ORDER BY cid");
@@ -163,6 +170,7 @@ echo addForm($pagename, 'post', null, 'multipart/form-data') . "<p>\n" .
 ?>
 <table>
 <tr><td scope="row">ID:          </td><td class="probid"><?php echo htmlspecialchars($data['probid'])?></td></tr>
+<tr><td scope="row">Depends on:  </td><td class="probid"><?php echo htmlspecialchars($data['depends'])?></td></tr>
 <tr><td scope="row">Name:        </td><td><?php echo htmlspecialchars($data['name'])?></td></tr>
 <tr><td scope="row">Contest:     </td><td><?php echo htmlspecialchars($data['contestname']) .
 									' (c' . htmlspecialchars($data['cid']) .')'?></td></tr>
