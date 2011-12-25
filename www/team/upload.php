@@ -18,8 +18,8 @@ if ( ! ENABLE_WEBSUBMIT_SERVER ) {
 	error("Websubmit disabled.");
 }
 
-if ( !isset($_POST['submit']) ) {
-	if (NONINTERACTIVE) error("No 'submit' done.");
+if ( !isset($_POST['submit']) && !isset($_POST['print'])) {
+	if (NONINTERACTIVE) error("No 'submit' nor 'print' done.");
 	header('Location: ./');
 	return;
 }
@@ -81,18 +81,29 @@ $lang = $DB->q('MAYBETUPLE SELECT langid, name FROM language
 if ( ! isset($lang) ) err("Unable to find language '$langid'");
 $langid = $lang['langid'];
 
-$sid = submit_solution($login, $probid, $langid, $_FILES['code']['tmp_name']);
+$sid = 0;
+$action = '';
+$message = '';
+if (isset($_POST['submit'])) {
+  $sid = submit_solution($login, $probid, $langid, $_FILES['code']['tmp_name']);
+  $action = 'submitted';
+  $message = 'Submission successful';
+} else {
+  $sid = print_solution($login, $_FILES['code']['tmp_name']);
+  $action = 'printed';
+  $message = 'Printout queued';
+}
 
 // Redirect back to index page when interactively used.
 if ( !NONINTERACTIVE ) {
-	header('Location: index.php?submitted=' . urlencode($sid) );
+	header('Location: index.php?' . $action . '=' . urlencode($sid) );
 }
 
 require(LIBWWWDIR . '/header.php');
 
 echo '<div id="uploadstatus">';
 if (NONINTERACTIVE) echo '<!-- noninteractive-upload-successful -->';
-echo "<p><a href=\"index.php?submitted=" . urlencode($sid) . "\">Submission successful.</a></p>";
+echo "<p><a href=\"index.php?" . $action . "=" . urlencode($sid) . "\">" . $message . ".</a></p>";
 echo "</div>\n";
 
 require(LIBWWWDIR . '/footer.php');

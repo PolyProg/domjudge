@@ -231,6 +231,24 @@ CREATE TABLE `submission` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='All incoming submissions';
 
 --
+-- Table structure for table `printout`
+--
+
+CREATE TABLE `printout` (
+  `submitid` int(4) unsigned NOT NULL auto_increment COMMENT 'Unique ID',
+  `cid` int(4) unsigned NOT NULL COMMENT 'Contest ID',
+  `teamid` varchar(15) NOT NULL COMMENT 'Team login',
+  `submittime` datetime NOT NULL COMMENT 'Time submitted',
+  `sourcecode` mediumblob NOT NULL COMMENT 'Full source code',
+  `printed` tinyint(1) unsigned NOT NULL default '0' COMMENT 'If true, then this file has been printed already',
+  PRIMARY KEY  (`submitid`),
+  KEY `teamid` (`cid`,`teamid`),
+  KEY `teamid_2` (`teamid`),
+  CONSTRAINT `printout_ibfk_1` FOREIGN KEY (`cid`) REFERENCES `contest` (`cid`) ON DELETE CASCADE,
+  CONSTRAINT `printout_ibfk_2` FOREIGN KEY (`teamid`) REFERENCES `team` (`login`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='All incoming submissions' AUTO_INCREMENT=5000;
+
+--
 -- Table structure for table `team`
 --
 

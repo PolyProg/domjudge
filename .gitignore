@@ -40,4 +40,5 @@ sql/dj-setup-database
 submit/submit_db.php
 submit/submitdaemon
 www/configure.php
-
+doc/team/team-manual-NL.pdf
+doc/team/team-manual.pdf
