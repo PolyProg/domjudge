@@ -201,8 +201,9 @@ legend {
 .score_neutral   { background: white;   }
 
 #scoresolv,#scoretotal { width: 5em; }
-.scorenc,.scorett,.scorepl { text-align: right; width: 2ex; }
+.scorenc,.scorett,.scorenp,.scorepl { text-align: right; width: 2ex; }
 td.scorenc { border-color: silver; }
+td.scorenp { border-color: silver; }
 
 .scoreprob { width: 7em; }
 .scoreaffil { text-align: center; }

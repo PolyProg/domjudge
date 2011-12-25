@@ -54,7 +54,7 @@ define('LDAP_DNQUERY', 'CN=&,OU=users,DC=example,DC=com');
 $DOMJUDGE_ADMINS = array('domjudge_jury', 'admin');
 
 // Penalty time in minutes per wrong submission (if finally solved).
-define('PENALTY_TIME', 20);
+define('PENALTY_TIME', 1);
 
 // List of auto-detected language extensions by the submit client.
 //   Format: 'LANG,MAINEXT[,EXT]... [LANG...]' where:
@@ -63,4 +63,4 @@ define('PENALTY_TIME', 20);
 //   - EXT... are comma separated additional detected language extensions.
 // This list only needs to be modified when additional languages are
 // added and should be kept in sync with the list in submit-config.h.in.
-define('LANG_EXTS', 'C,c C++,cpp,cc,c++ Java,java Pascal,pas,p Haskell,hs,lhs Perl,pl POSIX-shell,sh C#,csharp,cs AWK,awk Python,py Bash,bash');
+define('LANG_EXTS', 'C,c C++,cpp,cc,c++ Java,java Python,py');

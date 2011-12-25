@@ -124,6 +124,7 @@ function genScoreBoard($cdata, $jury = FALSE, $filter = NULL) {
 	foreach ($teams as $login => $team ) {
 		$SCORES[$login]['num_correct'] = 0;
 		$SCORES[$login]['total_time']  = 0;
+		$SCORES[$login]['penalty_time']  = 0;
 		$SCORES[$login]['solve_times'] = array();
 		$SCORES[$login]['rank']        = 0;
 		$SCORES[$login]['teamname']    = $team['name'];
@@ -153,7 +154,8 @@ function genScoreBoard($cdata, $jury = FALSE, $filter = NULL) {
 		if ( $srow['is_correct'] ) {
 			$SCORES[$srow['teamid']]['num_correct']++;
 			$SCORES[$srow['teamid']]['solve_times'][] = $srow['totaltime'];
-			$SCORES[$srow['teamid']]['total_time'] += $srow['totaltime'] + $penalty;
+			$SCORES[$srow['teamid']]['total_time'] += $srow['totaltime'];
+			$SCORES[$srow['teamid']]['penalty_time'] += $penalty;
 		}
 	}
 
@@ -294,7 +296,7 @@ function renderScoreBoardTable($cdata, $sdata, $myteamid = null,
 		( $SHOW_AFFILIATIONS ? '<th title="team affiliation" scope="col">' .
 		jurylink('team_affiliations.php','affil.') . '</th>' : '' ) .
 		'<th title="team name" scope="col">' . jurylink('teams.php','team') . '</th>' .
-		'<th title="# solved / penalty time" colspan="2" scope="col">' . jurylink(null,'score') . "</th>\n";
+		'<th title="# solved / penalties / total time" colspan="3" scope="col">' . jurylink(null,'score') . "</th>\n";
 	foreach( $probs as $pr ) {
 		echo '<th title="problem \'' . htmlspecialchars($pr['name']) . '\'" scope="col">' .
 			jurylink('problem.php?id=' . urlencode($pr['probid']),
@@ -380,6 +382,7 @@ function renderScoreBoardTable($cdata, $sdata, $myteamid = null,
 			'</td>';
 		echo
 			'<td class="scorenc">' . jurylink(null,$totals['num_correct']) . '</td>' .
+			'<td class="scorenp">' . jurylink(null,-$totals['penalty_time'] ) . '</td>'.
 			'<td class="scorett">' . jurylink(null,$totals['total_time'] ) . '</td>';
 
 		// for each problem
@@ -418,7 +421,7 @@ function renderScoreBoardTable($cdata, $sdata, $myteamid = null,
 			  jurylink('team_affiliations.php',count($summary['affils']) . ' / ' .
 					   count($summary['countries'])) . '</td>' : '' ) .
 			'<td title=" ">' . jurylink(null,'Summary') . '</td>' .
-			'<td title="total solved" class="scorenc">' . jurylink(null,$summary['num_correct'])  . '</td><td title=" "></td>';
+			'<td title="total solved" class="scorenc">' . jurylink(null,$summary['num_correct'])  . '</td><td class="scorenp" title=" "></td><td title=" "></td>';
 
 		foreach( array_keys($probs) as $prob ) {
 			$str = $summary['problems'][$prob]['num_submissions'] . ' / ' .
@@ -663,6 +666,10 @@ function cmpscore($a, $b) {
 	// more correct than someone else means higher rank
 	if ( $a['num_correct'] != $b['num_correct'] ) {
 		return $a['num_correct'] > $b['num_correct'] ? -1 : 1;
+	}
+	// else, less penalties means higher rank
+	if ( $a['penalty_time'] != $b['penalty_time'] ) {
+		return $a['penalty_time'] < $b['penalty_time'] ? -1 : 1;
 	}
 	// else, less time spent means higher rank
 	if ( $a['total_time'] != $b['total_time'] ) {
