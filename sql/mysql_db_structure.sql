@@ -241,6 +241,7 @@ CREATE TABLE `printout` (
   `submittime` datetime NOT NULL COMMENT 'Time submitted',
   `sourcecode` mediumblob NOT NULL COMMENT 'Full source code',
   `printed` tinyint(1) unsigned NOT NULL default '0' COMMENT 'If true, then this file has been printed already',
+  `delivered` tinyint(1) unsigned NOT NULL default '0' COMMENT 'If true, then this printout has been delivered already',
   PRIMARY KEY  (`submitid`),
   KEY `teamid` (`cid`,`teamid`),
   KEY `teamid_2` (`teamid`),
