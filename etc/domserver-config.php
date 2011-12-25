@@ -56,6 +56,10 @@ $DOMJUDGE_ADMINS = array('domjudge_jury', 'admin');
 // Penalty time in minutes per wrong submission (if finally solved).
 define('PENALTY_TIME', 1);
 
+// Secret key to generate the folder names for problem statements.
+define('PROBLEM_STATEMENTS_KEY', '2891c2aaea8606d06239ad2fa4560399');
+define('PROBLEM_STATEMENTS_LOC', '/domjudge/problems');
+
 // List of auto-detected language extensions by the submit client.
 //   Format: 'LANG,MAINEXT[,EXT]... [LANG...]' where:
 //   - LANG is the language name displayed,

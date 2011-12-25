@@ -391,3 +391,13 @@ function checkFileUpload($errorcode) {
 				'. Contact staff.');
 	}
 }
+
+function problemStatementUrl($probid) {
+  $folder = base64_encode(md5(PROBLEM_STATEMENTS_KEY . $probid, true));
+  $folder = str_replace('+', '', $folder);
+  $folder = str_replace('/', '', $folder);
+  $folder = str_replace('=', '', $folder);
+  $folder = substr($folder, 0, 14);
+  $folder = $probid . '-' . $folder;
+  return PROBLEM_STATEMENTS_LOC . '/' . $folder . '/';
+}

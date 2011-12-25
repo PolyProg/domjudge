@@ -11,6 +11,8 @@
 require('init.php');
 $title = 'Problems';
 
+$makedirs = '';
+
 require(LIBWWWDIR . '/header.php');
 
 echo "<h1>Problems</h1>\n\n";
@@ -37,6 +39,8 @@ if( $res->count() == 0 ) {
 	$lastcid = -1;
 
 	while($row = $res->next()) {
+                $statementUrl = problemStatementUrl($row['probid']);
+                $makedirs .= 'mkdir -p ' . substr($statementUrl, 10) . '<br />'; // remove '/domjudge/'
 		$classes = array();
 		if ( $row['cid'] != $cid ) $classes[] = 'disabled';
 		if ( $row['cid'] != $lastcid ) {
@@ -89,5 +93,14 @@ if ( IS_ADMIN ) {
 	}
        	echo "</p>\n\n";
 }
+
+echo '<hr />';
+echo '<p>Directories for problem statements (keep hidden from contestants!):</p>';
+echo '<p>';
+echo $makedirs;
+echo '</p>';
+echo '<p>Change the constants PROBLEM_STATEMENTS_* in etc/domserver-config.php to change.</p>';
+echo '<hr />';
+
 
 require(LIBWWWDIR . '/footer.php');

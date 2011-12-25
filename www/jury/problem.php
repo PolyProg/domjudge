@@ -167,10 +167,12 @@ echo addForm($pagename, 'post', null, 'multipart/form-data') . "<p>\n" .
 	addHidden('val[toggle_judge]',  !$data['allow_judge']) .
 	addHidden('val[toggle_submit]', !$data['allow_submit']).
 	"</p>\n";
+$statementUrl = problemStatementUrl($data['probid']);
 ?>
 <table>
 <tr><td scope="row">ID:          </td><td class="probid"><?php echo htmlspecialchars($data['probid'])?></td></tr>
 <tr><td scope="row">Depends on:  </td><td class="probid"><?php echo htmlspecialchars($data['depends'])?></td></tr>
+<tr><td scope="row">URL:  </td><td><a href="<?php echo $statementUrl;?>" target="_blank"><?php echo $statementUrl; ?></a></td></tr>
 <tr><td scope="row">Name:        </td><td><?php echo htmlspecialchars($data['name'])?></td></tr>
 <tr><td scope="row">Contest:     </td><td><?php echo htmlspecialchars($data['contestname']) .
 									' (c' . htmlspecialchars($data['cid']) .')'?></td></tr>
