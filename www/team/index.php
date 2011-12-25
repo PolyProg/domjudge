@@ -17,6 +17,7 @@ require(LIBWWWDIR . '/forms.php');
 $refreshtime = 30;
 
 $submitted = @$_GET['submitted'];
+$printed = @$_GET['printed'];
 
 #FIXME: JavaScript must be in page <head>
 echo "<script type=\"text/javascript\">\n<!--\n";
@@ -39,6 +40,8 @@ echo "<h3 class=\"teamoverview\">Submissions</h3>\n\n";
 if ( ENABLE_WEBSUBMIT_SERVER ) {
 	if ( $submitted ) {
 		echo "<p class=\"submissiondone\">submission done <a href=\"./\" style=\"color: red\">x</a></p>\n\n";
+	} else if ( $printed) {
+		echo "<p class=\"submissiondone\">printout queued <a href=\"./\" style=\"color: red\">x</a></p>\n\n";
 	} else {
 		echo addForm('upload.php','post',null,'multipart/form-data', null, ' onreset="resetUploadForm('.$refreshtime .');"') .
 		"<p id=\"submitform\">\n\n" .
@@ -60,7 +63,9 @@ if ( ENABLE_WEBSUBMIT_SERVER ) {
 		echo addSelect('langid', $langs, '', true);
 
 		echo addSubmit('submit', 'submit',
-			       "return checkUploadForm();");
+			       "return checkUploadFormSubmit();");
+		echo addSubmit('print', 'print',
+			       "return checkUploadFormPrint();");
 
 		echo addReset('cancel');
 

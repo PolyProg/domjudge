@@ -95,7 +95,17 @@ function detectProblemLanguage(filename)
 
 }
 
-function checkUploadForm()
+function checkUploadFormSubmit()
+{
+  return checkUploadForm(true);
+}
+
+function checkUploadFormPrint()
+{
+  return checkUploadForm(false);
+}
+
+function checkUploadForm(issubmit)
 {
 	var langelt = document.getElementById("langid");
 	var language = langelt.options[langelt.selectedIndex].value;
@@ -127,11 +137,18 @@ function checkUploadForm()
 	if ( error ) {
 		return false;
 	} else {
-		var question =
-			'Filename: ' + filename + '\n\n' +
-			'Problem: ' + problemtxt + '\n'+
-			'Language: ' + languagetxt + '\n' +
-			'\nMake submission?';
+		var question = '';
+		if ( issubmit ) {
+                  question =
+                          'Filename: ' + filename + '\n\n' +
+                          'Problem: ' + problemtxt + '\n'+
+                          'Language: ' + languagetxt + '\n' +
+                          '\nMake submission?';
+                } else {
+                  question =
+                          'Filename: ' + filename + '\n\n' +
+                          '\nPrint?';
+                }
 		return confirm (question);
 	}
 

@@ -570,6 +570,70 @@ function submit_solution($team, $prob, $lang, $file)
 }
 
 /**
+ * This function takes a temporary file of a file to be printed,
+ * validates it and puts it into the database. Additionally it
+ * moves it to a backup storage.
+ */
+function print_solution($team, $file)
+{
+	if( empty($team) ) error("No value for Team.");
+	if( empty($file) ) error("No value for Filename.");
+
+	global $cdata,$cid, $DB;
+
+	// If no contest has started yet, refuse submissions.
+	$now = now();
+
+	if( difftime($cdata['starttime'], $now) > 0 ) {
+		error("The contest is closed, no printouts accepted. [c$cid]");
+	}
+
+	// Check 2: valid parameters?
+	if( ! $login = $DB->q('MAYBEVALUE SELECT login FROM team WHERE login = %s',$team) ) {
+		error("Team '$team' not found in database.");
+	}
+	$team = $login;
+	if( ! is_readable($file) ) {
+		error("File '$file' not found (or not readable).");
+	}
+	if( filesize($file) > SOURCESIZE*1024 ) {
+		error("Printout file is larger than ".SOURCESIZE." kB.");
+	}
+
+	logmsg (LOG_INFO, "input verified (printing)");
+
+	// Insert submission into the database
+	$id = $DB->q('RETURNID INSERT INTO printout
+				  (cid, teamid, submittime, sourcecode)
+				  VALUES (%i, %s, %s, %s)',
+				 $cid, $team, $now,
+				 getFileContents($file, false));
+
+	// Log to event table
+	$DB->q('INSERT INTO event (eventtime, cid, teamid, langid, probid, submitid, description)
+			VALUES(%s, %i, %s, "txt", "PRINT", %i, "printout")',
+		   now(), $cid, $team, $id);
+
+	$tofile = 'print.' . getSourceFilename($cid,$id,$team,'PRINT','txt');
+	$topath = SUBMITDIR . "/$tofile";
+
+	if ( is_writable( SUBMITDIR ) ) {
+		// Copy the submission to SUBMITDIR for safe-keeping
+		if ( ! @copy($file, $topath) ) {
+			warning("Could not copy '" . $file . "' to '" . $topath . "'");
+		}
+	} else {
+		logmsg(LOG_DEBUG, "SUBMITDIR not writable, skipping");
+	}
+
+	if( difftime($cdata['endtime'], $now) <= 0 ) {
+		logmsg(LOG_INFO, "The contest is closed, submission stored but not processed. [c$cid]");
+	}
+
+	return $id;
+}
+
+/**
  * Compute the filename of a given submission.
  */
 function getSourceFilename($cid,$sid,$team,$prob,$lang)
