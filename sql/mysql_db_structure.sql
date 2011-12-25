@@ -158,6 +158,7 @@ CREATE TABLE `language` (
 
 CREATE TABLE `problem` (
   `probid` varchar(8) NOT NULL COMMENT 'Unique ID (string)',
+  `depends` varchar(8) default NULL COMMENT 'You must solve the problem referenced there to be able to see the description',
   `cid` int(4) unsigned NOT NULL COMMENT 'Contest ID',
   `name` varchar(255) NOT NULL COMMENT 'Descriptive name',
   `allow_submit` tinyint(1) unsigned NOT NULL default '0' COMMENT 'Are submissions accepted for this problem?',
@@ -168,7 +169,8 @@ CREATE TABLE `problem` (
   `color` varchar(25) default NULL COMMENT 'Balloon colour to display on the scoreboard',
   PRIMARY KEY  (`probid`),
   KEY `cid` (`cid`),
-  CONSTRAINT `problem_ibfk_1` FOREIGN KEY (`cid`) REFERENCES `contest` (`cid`) ON DELETE CASCADE
+  CONSTRAINT `problem_ibfk_1` FOREIGN KEY (`cid`) REFERENCES `contest` (`cid`) ON DELETE CASCADE,
+  CONSTRAINT `problem_ibfk_2` FOREIGN KEY (`depends`) REFERENCES `problem` (`probid`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Problems the teams can submit solutions for';
 
 --
