@@ -12,6 +12,7 @@
 <?php	} ?>
 <a href="submissions.php" accesskey="s">submissions</a>
 <a href="printouts.php" accesskey="r">printouts</a>
+<a href="balloons.php" accesskey="l">balloons</a>
 <a href="scoreboard.php" accesskey="b">scoreboard</a>
 </div>
 
