@@ -11,5 +11,6 @@ DEST="$2"
 # -static:	Static link with all libraries
 # -pipe:	Use pipes for communication between stages of compilation
 # -lm:		Link with math-library (has to be last argument!)
-gcc -Wall -O2 -static -pipe -o $DEST $SOURCE -lm
+# -lgmp:        Link with GNU multiprecision library
+gcc -Wall -O2 -static -pipe -o $DEST $SOURCE -lm -lgmp
 exit $?

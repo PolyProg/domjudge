@@ -10,5 +10,6 @@ DEST="$2"
 # -O2:		Level 2 optimizations (default for speed)
 # -static:	Static link with all libraries
 # -pipe:	Use pipes for communication between stages of compilation
-g++ -Wall -O2 -static -pipe -o $DEST $SOURCE
+# -lgmp:        Link with GNU multiprecision library
+g++ -Wall -O2 -static -pipe -o $DEST $SOURCE -lgmp
 exit $?

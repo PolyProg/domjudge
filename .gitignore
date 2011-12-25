@@ -21,6 +21,7 @@ judge/check_float
 judge/compare
 judge/compare.o
 judge/judgedaemon
+judge/printdaemon
 judge/runguard
 judge/runguard.o
 judge/runjury_boolfind
