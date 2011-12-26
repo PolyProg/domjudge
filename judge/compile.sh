@@ -4,13 +4,16 @@
 #
 # $Id: compile.sh 3569 2011-07-17 17:35:31Z eldering $
 
-# Usage: $0 <lang> <workdir>
+# Usage: $0 <lang> <workdir> <libraryprefix>
 #
 # <lang>            Language ID and extension of the source, see config-file
 #                   for details; source file must be located in
 #                   <workdir>/compile/source.<lang>
 # <workdir>         Base directory of this judging. Compilation is done in
 #                   <workdir>/compile, compiler output is stored in <workdir>.
+# <libraryprefix>   If present, the compile script will compile this file in addition to
+#                   the contestants files.
+#
 #
 # This script supports languages by calling separate compile scripts
 # depending on <lang>, namely 'compile_<lang>.sh'. These compile
@@ -20,7 +23,7 @@
 #
 # Syntax for these compile scripts is:
 #
-#   compile_<lang>.sh <source> <dest> <memlimit>
+#   compile_<lang>.sh <source> <dest> <memlimit> <library>
 #
 # where <dest> is the same filename as <source> but without extension.
 # The <javamemlimit> (in kB) is passed to the compile script to let
@@ -64,10 +67,12 @@ logmsg $LOG_INFO "starting '$0', PID = $$"
 [ $# -ge 2 ] || error "not enough arguments. See script-code for usage."
 LANG="$1";    shift
 WORKDIR="$1"; shift
+LIBRARYPREFIX="$1"; shift
 logmsg $LOG_DEBUG "arguments: '$LANG' '$WORKDIR'"
 
 COMPILE_SCRIPT="$SCRIPTDIR/compile_$LANG.sh"
 SOURCE="$WORKDIR/compile/source.$LANG"
+LIBRARIES="$WORKDIR/compile/$LIBRARYPREFIX"
 
 [ -r "$SOURCE"  ] || error "source not found: $SOURCE"
 [ -d "$WORKDIR" -a -w "$WORKDIR" -a -x "$WORKDIR" ] || \
@@ -83,6 +88,8 @@ touch compile.out compile.time
 
 # Make source readable (in case it is interpreted):
 chmod a+r "$SOURCE"
+[ -z "$LIBRARYPREFIX" ] || chmod a+r "$LIBRARIES".*
+[ -z "$LIBRARYPREFIX" ] || LIBRARY="$LIBRARYPREFIX.$LANG"
 
 logmsg $LOG_INFO "starting compile"
 cd "$WORKDIR/compile"
@@ -92,7 +99,7 @@ cd "$WORKDIR/compile"
 # intermediate files.
 exitcode=0
 "$RUNGUARD" ${DEBUG:+-v} -t $COMPILETIME -c -f 65536 -o "$WORKDIR/compile.time" -- \
-	"$COMPILE_SCRIPT" "`basename $SOURCE`" source "$MEMLIMIT_JAVA" >"$WORKDIR/compile.tmp" 2>&1 || \
+	"$COMPILE_SCRIPT" "`basename $SOURCE`" source "$MEMLIMIT_JAVA" "$LIBRARY" >"$WORKDIR/compile.tmp" 2>&1 || \
 	exitcode=$?
 if [ -f source ]; then
     mv -f source program

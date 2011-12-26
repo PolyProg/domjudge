@@ -15,17 +15,14 @@
 SOURCE="$1"
 DEST="$2"
 MEMLIMIT_JAVA="$3"
+LIBRARY="$4"
 MAINCLASS=""
-
-# Amount of memory reserved for the Java virtual machine in KB. The
-# default below is just above the maximum memory usage of current
-# versions of the jvm, but might need increasing in some cases.
-MEMRESERVED=300000
 
 TMPFILE=`mktemp /tmp/domjudge_javac_output.XXXXXX` || exit 1
 
 # Byte-compile:
-javac -d . "$SOURCE" 2> "$TMPFILE"
+echo javac -d . "$SOURCE" $LIBRARY '2>' "$TMPFILE"
+javac -d . "$SOURCE" $LIBRARY 2> "$TMPFILE"
 EXITCODE=$?
 if [ "$EXITCODE" -ne 0 ]; then
 	# Let's see if should have named the .java differently
@@ -38,7 +35,8 @@ if [ "$EXITCODE" -ne 0 ]; then
 	rm -f $TMPFILE
 	echo "Info: renaming source to '$PUBLICCLASS.java'"
 	mv "$SOURCE" "$PUBLICCLASS.java"
-	javac -d . "$PUBLICCLASS.java"
+	echo javac -d . "$PUBLICCLASS.java" $LIBRARY
+	javac -d . "$PUBLICCLASS.java" $LIBRARY
 	EXITCODE=$?
 	[ "$EXITCODE" -ne 0 ] && exit $EXITCODE
 fi
