@@ -26,6 +26,7 @@ etc/htpasswd-jury
 etc/judgehost-static.php
 etc/runguard-config.h
 etc/submit-config.h
+inst.sh
 judge/check_boolfind
 judge/check_float
 judge/compare

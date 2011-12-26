@@ -172,6 +172,7 @@ class db
 			case 'keyvaluetable':
 			case 'tuple':
 			case 'value':
+			case 'doselect':
 				$format = substr($format,strlen($key)+1);
 			case 'select':
 			case 'describe':
