@@ -126,6 +126,9 @@ src="../images/b_help.png" class="smallpicto" alt="?" /></a></td></tr>
 <tr><td><label for="data_0__special_compare_">Special compare script:</label></td>
 <td><?php echo addInput('data[0][special_compare]', @$row['special_compare'], 30, 25)?></td></tr>
 
+<tr><td><label for="data_0__library_prefix_">Library prefix:</label></td>
+<td><?php echo addInput('data[0][library_prefix]', @$row['library_prefix'], 30, 255)?></td></tr>
+
 </table>
 
 <?php
@@ -210,6 +213,10 @@ if ( !empty($data['special_run']) ) {
 if ( !empty($data['special_compare']) ) {
 	echo '<tr><td scope="row">Special compare script:</td><td class="filename">' .
 		htmlspecialchars($data['special_compare']) . "</td></tr>\n";
+}
+if ( !empty($data['library_prefix']) ) {
+	echo '<tr><td scope="row">Library prefix:</td><td class="filename">' .
+		htmlspecialchars($data['library_prefix']) . "</td></tr>\n";
 }
 
 if ( IS_ADMIN && class_exists("ZipArchive") ) {
