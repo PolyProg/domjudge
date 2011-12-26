@@ -166,6 +166,7 @@ CREATE TABLE `problem` (
   `timelimit` int(4) unsigned NOT NULL default '0' COMMENT 'Maximum run time for this problem',
   `special_run` varchar(25) default NULL COMMENT 'Script to run submissions for this problem',
   `special_compare` varchar(25) default NULL COMMENT 'Script to compare problem and jury output for this problem',
+  `library_prefix` varchar(255) default NULL COMMENT 'Name of the file (without extension) that will be compiled along with the source code',
   `color` varchar(25) default NULL COMMENT 'Balloon colour to display on the scoreboard',
   PRIMARY KEY  (`probid`),
   KEY `cid` (`cid`),
