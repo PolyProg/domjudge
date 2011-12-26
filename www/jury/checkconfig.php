@@ -213,6 +213,15 @@ if ( !is_writable(TMPDIR) ) {
               'TMPDIR can be used to store temporary files for submission diffs and edits.');
 }
 
+if (PROBLEM_STATEMENTS_KEY == '2891c2aaea8606d06239ad2fa4560399') {
+       result('configuration', 'Secret key for problem statements', 'W',
+              'You did not change the variable PROBLEM_STATEMENTS_KEY ' .
+              'in etc/domserver-config. This is a security risk!');
+} else {
+       result('configuration', 'Secret key for problem statements', 'O',
+              'PROBLEM_STATEMENTS_KEY was changed.');
+}
+
 flushresults();
 
 // CONTESTS
