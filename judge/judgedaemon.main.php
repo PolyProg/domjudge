@@ -253,7 +253,7 @@ while ( TRUE ) {
 	// get maximum runtime, source code and other parameters
 	$row = $DB->q('TUPLE SELECT CEILING(time_factor*timelimit) AS maxruntime,
 	               s.submitid, s.sourcecode, s.langid, s.teamid, s.probid,
-	               p.special_run, p.special_compare
+	               p.special_run, p.special_compare, p.library_prefix
 	               FROM submission s, problem p, language l
 	               WHERE s.probid = p.probid AND s.langid = l.langid AND
 	               judgemark = %s AND judgehost = %s', $mark, $myhost);
@@ -299,8 +299,29 @@ function judge($mark, $row, $judgingid)
 	}
 	unset($row['sourcecode']);
 
+        $prefix = $row['library_prefix'];
+        // If a library is set, copy the relevant files over
+        if( $prefix ) {
+          $jprefix = ucfirst($prefix);
+          $srcdir = "$workdir/compile/";
+          $libdir = LIBJUDGEDIR . '/';
+          $ok =        mycopy($libdir, $prefix  . '.h',    $srcdir);
+          $ok = $ok && mycopy($libdir, $prefix  . '.c',    $srcdir);
+          $ok = $ok && mycopy($libdir, $prefix  . '.hpp',  $srcdir);
+          $ok = $ok && mycopy($libdir, $prefix  . '.cpp',  $srcdir);
+          $ok = $ok && mycopy($libdir, $jprefix . '.java', $srcdir);
+          if (! $ok ) {
+              error("Could not copy files $prefix.{h,hpp,c,cpp} $jprefix.java");
+          }
+          if ($row['langid'] == 'java') {
+            $usedprefix = $jprefix;
+          } else {
+            $usedprefix = $prefix;
+          }
+        }
+
 	// Compile the program.
-	system(LIBJUDGEDIR . "/compile.sh $row[langid] '$workdir'", $retval);
+	system(LIBJUDGEDIR . "/compile.sh $row[langid] '$workdir' '$usedprefix'", $retval);
 
 	// what does the exitcode mean?
 	if( ! isset($EXITCODES[$retval]) ) {
@@ -468,4 +489,8 @@ function database_retry_connect()
 			throw $e;
 		}
 	}
+}
+
+function mycopy($fromdir, $filename, $todir) {
+  return copy($fromdir.$filename, $todir.$filename);
 }
