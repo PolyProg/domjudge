@@ -7,7 +7,7 @@ require_once("common-config.php");
 /** Restrictions during testing */
 
 // Run solutions in a chroot environment? (gives better security)
-define('USE_CHROOT', true);
+define('USE_CHROOT', false);
 
 // Optional script to run for creating/destroying chroot environment,
 // leave empty to disable. This example script can be used to support
@@ -22,6 +22,8 @@ define('COMPILETIME', 30);
 // This includes the shell which starts the compiled solution and
 // also any interpreter like Oracle (Sun) 'java', which takes 200MB away!
 define('MEMLIMIT', 524288);
+define('MEMLIMIT_C', 65536);    // 64M
+define('MEMLIMIT_JAVA', 98304); // 96M
 
 // Maximum filesize RUNUSER may write in kB
 // This should be greater than the maximum testdata output, otherwise
@@ -30,7 +32,7 @@ define('FILELIMIT', 4096);
 
 // Maximum no. processes running as RUNUSER (including shell and
 // possibly interpreters)
-define('PROCLIMIT', 15);
+define('PROCLIMIT', 100);
 
 /** Possible results and their priorities */
 
