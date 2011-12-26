@@ -45,6 +45,9 @@ install-judgehost:
 		judgedaemon.main.php printdaemon.main.php
 	$(INSTALL_PROG) -t $(DESTDIR)$(judgehost_bindir) judgedaemon printdaemon
 	$(INSTALL_PROG) -t $(DESTDIR)$(judgehost_bindir) runguard runpipe
+	$(INSTALL_DATA) -t $(DESTDIR)$(judgehost_libjudgedir) \
+		libraries/*.c libraries/*.cpp libraries/*.h libraries/*.hpp \
+		libraries/*.java
 
 clean-l:
 	-rm -f $(TARGETS) $(TARGETS:%=%$(OBJEXT))
