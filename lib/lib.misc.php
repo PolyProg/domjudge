@@ -496,6 +496,70 @@ function daemonize($pidfile = NULL)
 }
 
 /**
+ *  This function returns the list of problems to which the
+ *  given team can submit to: i.e., it has already solved the problem
+ *  a given problem depends on, or the given problem depends on no problems.
+ */
+function list_problems_satisfying_dependency($team) {
+    if( empty($team) ) error("No value for Team.");
+    global $DB, $cid;
+
+    $probs = $DB->q('DOSELECT
+                     (
+                       SELECT DISTINCT p.probid, p.depends, p.name, p.color, p.cid
+                       FROM problem p
+                       LEFT JOIN submission s ON (s.probid = p.depends)
+                       LEFT JOIN judging j ON (s.submitid = j.submitid)
+                       WHERE p.depends IS NOT NULL
+                       AND   p.allow_submit = 1
+                       AND   p.cid = %i
+                       AND   s.cid = %i
+                       AND   s.teamid = %s
+                       AND   j.valid = 1
+                       AND   j.result = \'correct\'
+                     )
+                     UNION DISTINCT
+                     (
+                       SELECT DISTINCT p.probid, p.depends, p.name, p.color, p.cid
+                       FROM problem p
+                       WHERE p.depends IS NULL
+                       AND p.allow_submit = 1
+                       AND p.cid = %i
+                     )
+                     ORDER by probid',
+                     $cid, $cid, $team, $cid);
+    return $probs;
+}
+
+/**
+ *  This function returns true if the team is allowed to submit to problem $prob:
+ *  ie. it has already solved the problem $prob depends on, or if $prob depends on no problems.
+ */
+function satisfies_dependency($team, $prob, &$depends) {
+    if( empty($team) ) error("No value for Team.");
+    if( empty($prob) ) error("No value for Problem.");
+
+    global $DB, $cid;
+    if(! $depends = $DB->q('MAYBEVALUE SELECT depends
+                            FROM problem
+                            WHERE probid = %s',
+                             $prob) ) {
+        // Problem doesn't depend on any other
+        return true;
+    }
+    $numcorrect = $DB->q('VALUE
+                          SELECT    count(*)
+                          FROM      submission s
+                          LEFT JOIN judging j ON (s.submitid = j.submitid AND j.valid=1)
+                          WHERE     s.cid = %i
+                          AND       s.teamid = %s
+                          AND       s.probid = %s
+                          AND       j.result = \'correct\'',
+                          $cid, $team, $depends);
+    return ($numcorrect > 0);
+}
+
+/**
  * This function takes a temporary file of a submission,
  * validates it and puts it into the database. Additionally it
  * moves it to a backup storage.
@@ -529,6 +593,10 @@ function submit_solution($team, $prob, $lang, $file)
 							AND cid = %i AND allow_submit = "1"', $prob, $cid) ) {
 		error("Problem '$prob' not found in database or not submittable [c$cid].");
 	}
+        if ( ! satisfies_dependency($team, $prob, $depends) ) {
+		error("You are not allowed to submit to problem '$prob' at this time:" .
+                      " you need to solve problem '$depends' first.");
+        }
 	if( ! is_readable($file) ) {
 		error("File '$file' not found (or not readable).");
 	}
