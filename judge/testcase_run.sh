@@ -5,7 +5,7 @@
 # $Id$
 
 # Usage: $0 <testdata.in> <testdata.out> <timelimit> <workdir>
-#           [<special-run> [<special-compare>]]
+#           <special-run> <special-compare> <memlimit>
 #
 # <testdata.in>     File containing test-input.
 # <testdata.out>    File containing test-output.
@@ -18,6 +18,7 @@
 #                   <special-compare> is to be used. The script
 #                   'run_<special-run>' or 'compare_<special-compare>'
 #                   will be called if argument is non-empty.
+# <memlimit>        The memory limit in kilobytes (set this to a very big value for java)
 #
 # For running the solution a script 'run' is called (default). For
 # usage of 'run' see that script. Likewise, for comparing results, a
@@ -97,15 +98,16 @@ PROGRAM="execdir/program"
 
 logmsg $LOG_INFO "starting '$0', PID = $$"
 
-[ $# -ge 4 ] || error "not enough arguments. See script-code for usage."
+[ $# -ge 7 ] || error "not enough arguments. See script-code for usage."
 TESTIN="$1";    shift
 TESTOUT="$1";   shift
 TIMELIMIT="$1"; shift
 WORKDIR="$1";   shift
-SPECIALRUN="$1";
-SPECIALCOMPARE="$2";
+SPECIALRUN="$1"; shift
+SPECIALCOMPARE="$1"; shift
+MEMLIMIT="$1";
 logmsg $LOG_DEBUG "arguments: '$TESTIN' '$TESTOUT' '$TIMELIMIT' '$WORKDIR'"
-logmsg $LOG_DEBUG "optionals: '$SPECIALRUN' '$SPECIALCOMPARE'"
+logmsg $LOG_DEBUG "           '$SPECIALRUN' '$SPECIALCOMPARE' '$MEMLIMIT'"
 
 COMPARE_SCRIPT="$SCRIPTDIR/compare${SPECIALCOMPARE:+_$SPECIALCOMPARE}"
 RUN_SCRIPT="$SCRIPTDIR/run${SPECIALRUN:+_$SPECIALRUN}"

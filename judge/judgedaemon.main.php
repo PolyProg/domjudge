@@ -26,6 +26,8 @@ putenv('USE_CHROOT='    . (USE_CHROOT ? '1' : ''));
 putenv('CHROOT_SCRIPT=' . CHROOT_SCRIPT);
 putenv('COMPILETIME='   . COMPILETIME);
 putenv('MEMLIMIT='      . MEMLIMIT);
+putenv('MEMLIMIT_C='    . MEMLIMIT_C);
+putenv('MEMLIMIT_JAVA=' . MEMLIMIT_JAVA);
 putenv('FILELIMIT='     . FILELIMIT);
 putenv('PROCLIMIT='     . PROCLIMIT);
 
@@ -367,10 +369,16 @@ function judge($mark, $row, $judgingid)
 	system("cp -pPRl '$workdir'/compile/* '$programdir'", $retval);
 	if ( $retval!=0 ) error("Could not copy program to '$programdir'");
 
+	// Determine memory limits
+        $memlimit = MEMLIMIT_C;
+        if ($row['langid'] == 'java') {
+          $memlimit = MEMLIMIT;  // The java run script takes care of enforcing MEMLIMIT_JAVA
+        }
+        logmsg(LOG_INFO, "Memory limits set to $memlimit (" . $row[langid] . ").");
 	// do the actual test-run
 	system(LIBJUDGEDIR . "/testcase_run.sh $tcfile[input] $tcfile[output] " .
 	       "$row[maxruntime] '$testcasedir' " .
-	       "'$row[special_run]' '$row[special_compare]'", $retval);
+	       "'$row[special_run]' '$row[special_compare]' $memlimit", $retval);
 
 	// what does the exitcode mean?
 	if( ! isset($EXITCODES[$retval]) ) {

@@ -14,7 +14,7 @@
 
 SOURCE="$1"
 DEST="$2"
-MEMLIMIT="$3"
+MEMLIMIT_JAVA="$3"
 MAINCLASS=""
 
 # Amount of memory reserved for the Java virtual machine in KB. The
@@ -64,9 +64,6 @@ if [ -z "$MAINCLASS" ]; then
 	exit 1
 fi
 
-# Calculate Java program memlimit as MEMLIMIT - max. JVM memory usage:
-MEMLIMITJAVA=$(($MEMLIMIT - $MEMRESERVED))
-
 # Write executing script:
 # Executes java byte-code interpreter with following options
 # -Xmx: maximum size of memory allocation pool
@@ -81,7 +78,7 @@ if [ "\${0%/*}" != "\$0" ]; then
 	cd "\${0%/*}"
 fi
 
-exec java -Xrs -Xss8m -Xmx${MEMLIMITJAVA}k $MAINCLASS
+exec java -Xrs -Xss8m -Xmx${MEMLIMIT_JAVA}k $MAINCLASS
 EOF
 
 chmod a+x $DEST

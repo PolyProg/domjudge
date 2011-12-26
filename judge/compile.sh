@@ -23,7 +23,7 @@
 #   compile_<lang>.sh <source> <dest> <memlimit>
 #
 # where <dest> is the same filename as <source> but without extension.
-# The <memlimit> (in kB) is passed to the compile script to let
+# The <javamemlimit> (in kB) is passed to the compile script to let
 # interpreted languages (read: Oracle (Sun) javac/java) be able to set the
 # internal maximum memory size.
 
@@ -92,7 +92,7 @@ cd "$WORKDIR/compile"
 # intermediate files.
 exitcode=0
 "$RUNGUARD" ${DEBUG:+-v} -t $COMPILETIME -c -f 65536 -o "$WORKDIR/compile.time" -- \
-	"$COMPILE_SCRIPT" "`basename $SOURCE`" source "$MEMLIMIT" >"$WORKDIR/compile.tmp" 2>&1 || \
+	"$COMPILE_SCRIPT" "`basename $SOURCE`" source "$MEMLIMIT_JAVA" >"$WORKDIR/compile.tmp" 2>&1 || \
 	exitcode=$?
 if [ -f source ]; then
     mv -f source program
