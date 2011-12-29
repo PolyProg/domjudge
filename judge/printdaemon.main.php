@@ -250,7 +250,7 @@ function doprint($row)
                        " -s2" .
                        " --header" .
                        " --left-title=" . escapeshellarg($row['room']) .
-                       " --center-title=" . escapeshellarg($row['login']) .
+                       " --center-title=" . escapeshellarg($row['login'] . ' - ' . substr($row['name'], 0, 12)) .
                        " --footer=" . escapeshellarg($row['submittime']) .
                        " --left-footer=" . escapeshellarg($row['name']) .
                        " --right-footer=" . escapeshellarg('ID: ' . $row['submitid']) .
