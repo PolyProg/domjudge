@@ -9,6 +9,7 @@
  * under the GNU GPL. See README and COPYING for details.
  */
 
+$rank_by_team = array();
 
 /**
  * The calcScoreRow is in lib/lib.misc.php because it's used by other
@@ -265,6 +266,9 @@ function genScoreBoard($cdata, $jury = FALSE, $filter = NULL) {
 function renderScoreBoardTable($cdata, $sdata, $myteamid = null,
 	$static = FALSE, $limitteams = null, $displayrank = TRUE, $center = FALSE) {
 
+        global $rank_by_team;
+        $rank_by_team = array();
+
 	$cid = $cdata['cid'];
 
 	// 'unpack' the scoreboard data:
@@ -335,8 +339,10 @@ function renderScoreBoardTable($cdata, $sdata, $myteamid = null,
 			echo jurylink(null,'?');
 		} elseif ( !isset($prevteam) || $scores[$prevteam]['rank']!=$totals['rank'] ) {
 			echo jurylink(null,$totals['rank']);
+                        $rank_by_team[$team]=$totals['rank'];
 		} else {
 			echo jurylink(null,'');
+                        $rank_by_team[$team]=$rank_by_team[$prevteam];
 		}
 		$prevteam = $team;
 		echo '</td>';
