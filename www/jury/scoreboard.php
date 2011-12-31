@@ -35,5 +35,11 @@ foreach(array_keys($rank_by_team) as $key) {
   echo "$key=" . $rank_by_team[$key] . "|";
 }
 echo "</p>";
+echo "<p style='color:silver'>Score per team (for website)<br />";
+//Print a little output for writing ranks to the website
+foreach(array_keys($score_by_team) as $key) {
+  echo "$key=" . $score_by_team[$key] . "|";
+}
+echo "</p>";
 
 require(LIBWWWDIR . '/footer.php');

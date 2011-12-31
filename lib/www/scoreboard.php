@@ -10,6 +10,7 @@
  */
 
 $rank_by_team = array();
+$score_by_team = array();
 
 /**
  * The calcScoreRow is in lib/lib.misc.php because it's used by other
@@ -266,8 +267,9 @@ function genScoreBoard($cdata, $jury = FALSE, $filter = NULL) {
 function renderScoreBoardTable($cdata, $sdata, $myteamid = null,
 	$static = FALSE, $limitteams = null, $displayrank = TRUE, $center = FALSE) {
 
-        global $rank_by_team;
+        global $rank_by_team, $score_by_team;
         $rank_by_team = array();
+        $score_by_team = array();
 
 	$cid = $cdata['cid'];
 
@@ -361,7 +363,7 @@ function renderScoreBoardTable($cdata, $sdata, $myteamid = null,
 						' title="' . htmlspecialchars($teams[$team]['affilname']) . '" />';
 				} else {
 					echo htmlspecialchars($teams[$team]['affilid']);
-				}
+				} /*
 				if ( isset($teams[$team]['country']) ) {
 					$countryflag = '../images/countries/' .
 						urlencode($teams[$team]['country']) . '.png';
@@ -373,7 +375,7 @@ function renderScoreBoardTable($cdata, $sdata, $myteamid = null,
 					} else {
 						echo htmlspecialchars($teams[$team]['country']);
 					}
-				}
+				} */
 				if ( IS_JURY ) echo '</a>';
 			}
 			echo '</td>';
@@ -390,6 +392,7 @@ function renderScoreBoardTable($cdata, $sdata, $myteamid = null,
 			'<td class="scorenc">' . jurylink(null,$totals['num_correct']) . '</td>' .
 			'<td class="scorenp">' . jurylink(null,-$totals['penalty_time'] ) . '</td>'.
 			'<td class="scorett">' . jurylink(null,$totals['total_time'] ) . '</td>';
+                $score_by_team[$team]=$totals['num_correct'];
 
 		// for each problem
 		foreach ( array_keys($probs) as $prob ) {
