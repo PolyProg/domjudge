@@ -97,7 +97,8 @@ if ( isset($_POST['forteam']) ) {
 		// update the team table with a password
 		$DB->q('UPDATE team SET authtoken = %s WHERE login = %s', md5($team['login'].'#'.$pass), $team['login']);
 		$members = str_replace(array("\r\n","\n","\r")," & ", $team['members']);
-		echo "Team:      " . htmlspecialchars($team['name']) . "\n" .
+		echo "Helvetic Coding Contest 2012" . "\n" .
+                     "Team:      " . htmlspecialchars($team['name']) . "\n" .
 		     "Members:   " . htmlspecialchars($members) . "\n" .
 		     "Login:     " . htmlspecialchars($team['login']) . "\n" .
 		     "Password:  $pass\n\n\n\n";
