@@ -496,39 +496,38 @@ function daemonize($pidfile = NULL)
 }
 
 /**
- *  This function returns the list of problems to which the
- *  given team can submit to: i.e., it has already solved the problem
- *  a given problem depends on, or the given problem depends on no problems.
+ *  This function returns the list of all problems in this contest
  */
-function list_problems_satisfying_dependency($team) {
+function list_problems_in_contests() {
+    global $DB, $cid;
+
+    $probs = $DB->q('SELECT DISTINCT p.probid, p.depends, p.name, p.color, p.cid
+                     FROM problem p
+                     WHERE p.allow_submit = 1
+                     AND p.cid = %i
+                     ORDER by probid',
+                     $cid);
+    return $probs;
+}
+
+/**
+ *  This function returns the list of problems which the team solved
+ */
+function list_problems_solved($team) {
     if( empty($team) ) error("No value for Team.");
     global $DB, $cid;
 
-    $probs = $DB->q('DOSELECT
-                     (
-                       SELECT DISTINCT p.probid, p.depends, p.name, p.color, p.cid
-                       FROM problem p
-                       LEFT JOIN submission s ON (s.probid = p.depends)
-                       LEFT JOIN judging j ON (s.submitid = j.submitid)
-                       WHERE p.depends IS NOT NULL
-                       AND   p.allow_submit = 1
-                       AND   p.cid = %i
-                       AND   s.cid = %i
-                       AND   s.teamid = %s
-                       AND   j.valid = 1
-                       AND   j.result = \'correct\'
-                     )
-                     UNION DISTINCT
-                     (
-                       SELECT DISTINCT p.probid, p.depends, p.name, p.color, p.cid
-                       FROM problem p
-                       WHERE p.depends IS NULL
-                       AND p.allow_submit = 1
-                       AND p.cid = %i
-                     )
-                     ORDER by probid',
-                     $cid, $cid, $team, $cid);
-    return $probs;
+    $probs = $DB->q('COLUMN SELECT DISTINCT s.probid
+                     FROM submission s
+                     LEFT JOIN judging j ON (s.submitid = j.submitid)
+                     WHERE s.cid = %i
+                     AND   s.teamid = %s
+                     AND   s.valid = 1
+                     AND   j.valid = 1
+                     AND   j.result = \'correct\'
+                     ',
+                     $cid, $team);
+    return array_flip($probs);
 }
 
 /**
@@ -550,7 +549,7 @@ function satisfies_dependency($team, $prob, &$depends) {
     $numcorrect = $DB->q('VALUE
                           SELECT    count(*)
                           FROM      submission s
-                          LEFT JOIN judging j ON (s.submitid = j.submitid AND j.valid=1)
+                          LEFT JOIN judging j ON (s.submitid = j.submitid AND s.valid=1 AND j.valid=1)
                           WHERE     s.cid = %i
                           AND       s.teamid = %s
                           AND       s.probid = %s
