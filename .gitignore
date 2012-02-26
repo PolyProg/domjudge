@@ -6,8 +6,6 @@
 /configure
 /output
 /paths.mk
-config.log
-config.status
 doc/team/gentexconfig
 doc/team/team-manual-NL.aux
 doc/team/team-manual-NL.log
@@ -47,7 +45,6 @@ misc-tools/runssh_judgehosts
 misc-tools/runssh_teams
 misc-tools/save_sources2file
 misc-tools/static_scoreboard
-paths.mk
 sql/dj-setup-database
 submit/submit_db.php
 submit/submitdaemon
