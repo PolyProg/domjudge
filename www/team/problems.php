@@ -21,6 +21,8 @@ if( $res->count() == 0 ) {
 } else {
 	echo "<table class=\"list sortable\">\n<thead>\n" .
 		"<tr><th scope=\"col\">ID</th><th scope=\"col\">name</th>" .
+		"<th class=\"sorttable_nosort\" scope=\"col\">PDF</th>" .
+		"<th class=\"sorttable_nosort\" scope=\"col\">Files</th>" .
 		"<th class=\"sorttable_nosort\" scope=\"col\">colour</th>" .
 		"</tr></thead>\n<tbody>\n";
 
@@ -44,13 +46,19 @@ if( $res->count() == 0 ) {
 
                 if($cansubmit) {
                   $link = '<a href="' . $statementUrl . '">';
+                  $linkPdf = '<a href="' . $statementUrl . '/'.$row['probid'].'.pdf">';
+                  $linkZip = '<a href="' . $statementUrl . '/'.$row['probid'].'.zip">';
                 } else {
                   $link = '<a>';
+                  $linkPdf = '<a>';
+                  $linkZip = '<a>';
                 }
                 echo "<tr class=\"" . implode(' ',$classes) .
                     "\"><td class=\"probid\">" . $link .
                                 htmlspecialchars($row['probid'])."</a>".
                         "</td><td>" . $link . htmlspecialchars($row['name'])."</a>".
+                        "</td><td>" . $linkPdf . '<img src="../images/pdf.png"></img><u>PDF</u>' ."</a>".
+                        "</td><td>" . $linkZip . '<img src="../images/zip.png"></img><u>Files</u>' ."</a>".
                         "</td>".
                         ( !empty($row['color'])
                         ? '<td title="' . htmlspecialchars($row['color']) .
