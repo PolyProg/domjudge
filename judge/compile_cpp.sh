@@ -14,5 +14,6 @@ echo g++ -Wall -O2 $STATIC -pipe -o $DEST $SOURCE $LIBRARY -lgmp
 # -static:	Static link with all libraries
 # -pipe:	Use pipes for communication between stages of compilation
 # -lgmp:        Link with GNU multiprecision library
-g++ -Wall -O2 $STATIC -pipe -o $DEST $SOURCE $LIBRARY -lgmp
+# -lgmpxx:      Link with C++ extensions of GNU multiprecision library
+g++ -Wall -O2 $STATIC -pipe -o $DEST $SOURCE $LIBRARY -lgmp -lgmpxx
 exit $?
