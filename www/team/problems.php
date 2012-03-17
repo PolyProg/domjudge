@@ -45,7 +45,7 @@ if( $res->count() == 0 ) {
                 }
 
                 if($cansubmit) {
-                  $link = '<a href="' . $statementUrl . '">';
+                  $link = '<a href="' . $statementUrl . '/'.$row['probid'].'.pdf">';
                   $linkPdf = '<a href="' . $statementUrl . '/'.$row['probid'].'.pdf">';
                   $linkZip = '<a href="' . $statementUrl . '/'.$row['probid'].'.zip">';
                 } else {
