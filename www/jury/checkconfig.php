@@ -221,6 +221,13 @@ if (PROBLEM_STATEMENTS_KEY == '2891c2aaea8606d06239ad2fa4560399') {
        result('configuration', 'Secret key for problem statements', 'O',
               'PROBLEM_STATEMENTS_KEY was changed.');
 }
+if (HC2_RULES == '1') {
+       result('configuration', 'Rules', 'O',
+              'Helvetic Coding Contest rules (penalty='.PENALTY_TIME.').');
+} else {
+       result('configuration', 'Rules', 'O',
+              'SWERC rules (penalty='.PENALTY_TIME.').');
+}
 
 flushresults();
 

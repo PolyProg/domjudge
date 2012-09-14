@@ -156,8 +156,13 @@ function genScoreBoard($cdata, $jury = FALSE, $filter = NULL) {
 		if ( $srow['is_correct'] ) {
 			$SCORES[$srow['teamid']]['num_correct']++;
 			$SCORES[$srow['teamid']]['solve_times'][] = $srow['totaltime'];
-			$SCORES[$srow['teamid']]['total_time'] += $srow['totaltime'];
-			$SCORES[$srow['teamid']]['penalty_time'] += $penalty;
+                        if (HC2_RULES == '1') {
+                          $SCORES[$srow['teamid']]['total_time'] += $srow['totaltime'];
+                          $SCORES[$srow['teamid']]['penalty_time'] += $penalty;
+                        } else {
+                          $SCORES[$srow['teamid']]['total_time'] += $srow['totaltime'] + $penalty;
+                          $SCORES[$srow['teamid']]['penalty_time'] += $penalty;
+                        }
 		}
 	}
 
@@ -296,13 +301,17 @@ function renderScoreBoardTable($cdata, $sdata, $myteamid = null,
 		"</colgroup>\n";
 
 	// column headers
+        $point_label = '# solved / time + penalties / total time';
+        if (HC2_RULES == '1') {
+          $point_label = '# solved / penalties / total time';
+        }
 	echo "<thead>\n";
 	echo '<tr class="scoreheader">' .
 		'<th title="rank" scope="col">' . jurylink(null,'#') . '</th>' .
 		( $SHOW_AFFILIATIONS ? '<th title="team affiliation" scope="col">' .
 		jurylink('team_affiliations.php','affil.') . '</th>' : '' ) .
 		'<th title="team name" scope="col">' . jurylink('teams.php','team') . '</th>' .
-		'<th title="# solved / penalties / total time" colspan="3" scope="col">' . jurylink(null,'score') . "</th>\n";
+		'<th title="' . $point_label. '" colspan="3" scope="col">' . jurylink(null,'score') . "</th>\n";
 	foreach( $probs as $pr ) {
 		echo '<th title="problem \'' . htmlspecialchars($pr['name']) . '\'" scope="col">' .
 			jurylink('problem.php?id=' . urlencode($pr['probid']),
@@ -388,9 +397,13 @@ function renderScoreBoardTable($cdata, $sdata, $myteamid = null,
 			htmlspecialchars($teams[$team]['name']) .
 			($static ? '' : '</a>') .
 			'</td>';
+                $second_score_row = ($totals['total_time']-$totals['penalty_time']) . ' + ' . $totals['penalty_time'];
+                if (HC2_RULES == '1') {
+                  $second_score_row = -$totals['penalty_time'];
+                }
 		echo
 			'<td class="scorenc">' . jurylink(null,$totals['num_correct']) . '</td>' .
-			'<td class="scorenp">' . jurylink(null,-$totals['penalty_time'] ) . '</td>'.
+			'<td class="scorenp">' . jurylink(null,$second_score_row ) . '</td>'.
 			'<td class="scorett">' . jurylink(null,$totals['total_time'] ) . '</td>';
                 $score_by_team[$team]=$totals['num_correct'];
 
@@ -676,10 +689,12 @@ function cmpscore($a, $b) {
 	if ( $a['num_correct'] != $b['num_correct'] ) {
 		return $a['num_correct'] > $b['num_correct'] ? -1 : 1;
 	}
-	// else, less penalties means higher rank
-	if ( $a['penalty_time'] != $b['penalty_time'] ) {
-		return $a['penalty_time'] < $b['penalty_time'] ? -1 : 1;
-	}
+	// else, less penalties means higher rank (only for HC2)
+        if (HC2_RULES == '1') {
+          if ( $a['penalty_time'] != $b['penalty_time'] ) {
+                  return $a['penalty_time'] < $b['penalty_time'] ? -1 : 1;
+          }
+        }
 	// else, less time spent means higher rank
 	if ( $a['total_time'] != $b['total_time'] ) {
 		return $a['total_time'] < $b['total_time'] ? -1 : 1;
