@@ -2,6 +2,19 @@
 
 require_once("common-config.php");
 
+// **** CONTEST-DEPENDANT-CONFIGURATION ****
+
+// Secret key to generate the folder names for problem statements.
+define('PROBLEM_STATEMENTS_KEY', '4a15fe1c33d43c430655cfc3bbb92b9e');
+define('PROBLEM_STATEMENTS_LOC', '/domjudge/problems');
+// Are we using HC2-rules (1) or SWERC rules (0)?
+define('HC2_RULES', 0);
+// Name of the contest and URL (for password output)
+define('CONTEST_NAME_PWD', 'Training Contest 1');
+define('CONTEST_URL_PWD', 'http://ec2.hc2.ch');
+
+// **** END CONTEST-DEPENDANT-CONFIGURATION ****
+
 // Show compile output in team webinterface.
 // Note that this might give teams the possibility to gain information
 // about the judging system; e.g. which functions are usable or
@@ -53,13 +66,6 @@ define('LDAP_DNQUERY', 'CN=&,OU=users,DC=example,DC=com');
 // rights on top of their jury rights
 $DOMJUDGE_ADMINS = array('domjudge_jury', 'admin');
 
-// Penalty time in minutes per wrong submission (if finally solved).
-define('PENALTY_TIME', 1);
-
-// Secret key to generate the folder names for problem statements.
-define('PROBLEM_STATEMENTS_KEY', '2891c2aaea8606d06239ad2fa4560399');
-define('PROBLEM_STATEMENTS_LOC', '/domjudge/problems');
-
 // List of auto-detected language extensions by the submit client.
 //   Format: 'LANG,MAINEXT[,EXT]... [LANG...]' where:
 //   - LANG is the language name displayed,
@@ -68,3 +74,11 @@ define('PROBLEM_STATEMENTS_LOC', '/domjudge/problems');
 // This list only needs to be modified when additional languages are
 // added and should be kept in sync with the list in submit-config.h.in.
 define('LANG_EXTS', 'C,c C++,cpp,cc,c++ Java,java Python,py');
+
+// Penalty time in minutes per wrong submission (if finally solved).
+if ( HC2_RULES == 1) {
+  define('PENALTY_TIME', 1);
+} else {
+  define('PENALTY_TIME', 20);
+}
+

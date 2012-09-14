@@ -11,6 +11,10 @@ $title = htmlspecialchars($teamdata['name']);
 require(LIBWWWDIR . '/header.php');
 require(LIBWWWDIR . '/forms.php');
 
+$cid = $cdata['cid'];
+$now = now();
+$cstarted = difftime($cdata['starttime'],$now) <= 0;
+
 // Don't use HTTP meta refresh, but javascript: otherwise we cannot
 // cancel it when the user starts editing the submit form. This also
 // provides graceful degradation without javascript present.
@@ -37,7 +41,7 @@ echo "<div id=\"submitlist\">\n";
 
 echo "<h3 class=\"teamoverview\">Submissions</h3>\n\n";
 
-if ( ENABLE_WEBSUBMIT_SERVER ) {
+if ( ENABLE_WEBSUBMIT_SERVER && $cstarted ) {
 	if ( $submitted ) {
 		echo "<p class=\"submissiondone\">submission done <a href=\"./\" style=\"color: red\">x</a></p>\n\n";
 	} else if ( $printed) {

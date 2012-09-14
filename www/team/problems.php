@@ -10,15 +10,25 @@ require('init.php');
 $title = 'Problems';
 require(LIBWWWDIR . '/header.php');
 
-echo "<h1>Problem statements</h1>\n\n";
-
-$res = list_problems_in_contests();
-
-$listsolved = list_problems_solved($login);
-
-if( $res->count() == 0 ) {
-	echo "<p class=\"nodata\">No problems defined</p>\n\n";
+$cid = $cdata['cid'];
+$now = now();
+$cstarted = difftime($cdata['starttime'],$now) <= 0;
+if (!$cstarted) {
+			global $teamdata;
+			echo "<h2 id=\"teamwelcome\">welcome team <span id=\"teamwelcometeam\">" .
+				htmlspecialchars($teamdata['name']) . "</span>!</h2>\n\n";
+			echo "<h3 id=\"contestnotstarted\">contest is scheduled to start at " .
+				printtime($cdata['starttime']) . "</h3>\n\n";
 } else {
+  echo "<h1>Problem statements</h1>\n\n";
+
+  $res = list_problems_in_contests();
+
+  $listsolved = list_problems_solved($login);
+
+  if( $res->count() == 0 ) {
+          echo "<p class=\"nodata\">No problems defined</p>\n\n";
+  } else {
 	echo "<table class=\"list sortable\">\n<thead>\n" .
 		"<tr><th scope=\"col\">ID</th><th scope=\"col\">name</th>" .
 		"<th class=\"sorttable_nosort\" scope=\"col\">PDF</th>" .
@@ -71,6 +81,7 @@ if( $res->count() == 0 ) {
 
 	}
 	echo "</tbody>\n</table>\n\n";
+  }
 }
 
 
