@@ -37,7 +37,8 @@ foreach ( $EXITCODES as $code => $name ) {
 	putenv($var . '=' . $code);
 }
 
-$waittime = 5;
+$waittime = 10;
+$room_prefix = '';
 
 $myhost = trim(`hostname | cut -d . -f 1`);
 
@@ -58,11 +59,12 @@ function usage()
 	    "  -v       set verbosity to LEVEL (syslog levels)\n" .
 	    "  -m       Don't print, just output ps files\n" .
 	    "  -h       display this help and exit\n" .
+	    "  -r       room prefix (only print if team room has this prefix)\n" .
 	    "  -V       output version information and exit\n\n";
 	exit;
 }
 
-$options = getopt("dmv:hV");
+$options = getopt("dmv:hVr:");
 // FIXME: getopt doesn't return FALSE on parse failure as documented!
 if ( $options===FALSE ) {
 	echo "Error: parsing options failed.\n";
@@ -71,6 +73,7 @@ if ( $options===FALSE ) {
 if ( isset($options['d']) ) $options['daemon']  = $options['d'];
 if ( isset($options['m']) ) $options['mock']  = $options['m'];
 if ( isset($options['v']) ) $options['verbose'] = $options['v'];
+if ( isset($options['r']) ) $room_prefix = $options['r'];
 
 if ( isset($options['V']) ) version();
 if ( isset($options['h']) ) usage();
@@ -193,6 +196,7 @@ while ( TRUE ) {
 		       (isset($oldcid) ? "c$oldcid" : "none" ) . " to " .
 		       (isset($newcid) ? "c$newcid" : "none" ) );
 		$cid = $newcid;
+          logmsg(LOG_NOTICE, "Room: " . $room_prefix);
 	}
 
 	// First, use a select to see whether there are any judgeable
@@ -200,7 +204,13 @@ while ( TRUE ) {
 	// first prevents a write-lock on the submission table if nothing is
 	// to be judged, and also prevents throwing away the query cache every
 	// single time
-	$numopen = $DB->q('VALUE SELECT COUNT(*) FROM printout where printed = 0');
+	$numopen = $DB->q('VALUE SELECT COUNT(*)
+                           FROM printout p
+                           LEFT JOIN team t ON (t.login  = p.teamid)
+                           WHERE printed = 0
+                           AND room LIKE %s',
+                              $room_prefix . '%'
+                           );
 
 	// nothing updated -> no open submissions
 	if ( $numopen == 0 ) {
@@ -220,7 +230,8 @@ while ( TRUE ) {
                        FROM printout p
                        LEFT JOIN team t ON (t.login  = p.teamid)
                        WHERE printed = 0
-                       LIMIT 1');
+                       AND room LIKE %s
+                       LIMIT 1', $room_prefix . '%' );
 
 	logmsg(LOG_INFO, "Printing $row[submitid]");
 
