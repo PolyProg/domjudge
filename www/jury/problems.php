@@ -40,7 +40,7 @@ if( $res->count() == 0 ) {
 
 	while($row = $res->next()) {
                 $statementUrl = problemStatementUrl($row['probid']);
-                $makedirs .= 'mkdir -p ' . substr($statementUrl, 10) . '<br />'; // remove '/domjudge/'
+                $makedirs .= 'mkdir -p ' . substr($statementUrl, 19) . '<br />'; // remove '/domjudge/problems'
 		$classes = array();
 		if ( $row['cid'] != $cid ) $classes[] = 'disabled';
 		if ( $row['cid'] != $lastcid ) {
@@ -93,6 +93,9 @@ if ( IS_ADMIN ) {
 	}
        	echo "</p>\n\n";
 }
+
+$statementUrl = problemStatementUrl('all');
+$makedirs .= 'mkdir -p ' . substr($statementUrl, 19) . '<br />'; // remove '/domjudge/problems/'
 
 echo '<hr />';
 echo '<p>Directories for problem statements (keep hidden from contestants!):</p>';

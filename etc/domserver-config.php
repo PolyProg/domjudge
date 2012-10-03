@@ -5,12 +5,12 @@ require_once("common-config.php");
 // **** CONTEST-DEPENDANT-CONFIGURATION ****
 
 // Secret key to generate the folder names for problem statements.
-define('PROBLEM_STATEMENTS_KEY', '4a15fe1c33d43c430655cfc3bbb92b9e');
+define('PROBLEM_STATEMENTS_KEY', '4a16fe1c32d43c420655cfc3bbb92b9e');
 define('PROBLEM_STATEMENTS_LOC', '/domjudge/problems');
 // Are we using HC2-rules (1) or SWERC rules (0)?
 define('HC2_RULES', 0);
 // Name of the contest and URL (for password output)
-define('CONTEST_NAME_PWD', 'Training Contest 1');
+define('CONTEST_NAME_PWD', 'ACM VIS Welcome Contest');
 define('CONTEST_URL_PWD', 'http://ec2.hc2.ch');
 
 // **** END CONTEST-DEPENDANT-CONFIGURATION ****

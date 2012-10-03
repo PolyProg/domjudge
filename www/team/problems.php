@@ -80,6 +80,18 @@ if (!$cstarted) {
                         echo "</td></tr>\n";
 
 	}
+        if (HC2_RULES == '0') {
+          $statementUrl = problemStatementUrl('all');
+          $link = '<a href="' . $statementUrl . '/all.pdf">';
+          $linkPdf = '<a href="' . $statementUrl . '/all.pdf">';
+          $linkZip = '<a href="' . $statementUrl . '/all.zip">';
+          echo "<tr><td></td></tr>";
+          echo "<tr><td>";
+          echo "</td><td>" . $link . "<strong>All Problems</strong></a>";
+          echo "</td><td>" . $linkPdf . '<img src="../images/pdf.png"></img><u>PDF</u>' ."</a>";
+          echo "</td><td>" . $linkZip . '<img src="../images/zip.png"></img><u>Files</u>' ."</a>";
+          echo "</td></tr>";
+        }
 	echo "</tbody>\n</table>\n\n";
   }
 }
