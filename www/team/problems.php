@@ -31,6 +31,7 @@ if (!$cstarted) {
   } else {
 	echo "<table class=\"list sortable\">\n<thead>\n" .
 		"<tr><th scope=\"col\">ID</th><th scope=\"col\">name</th>" .
+		"<th class=\"sorttable_nosort\" scope=\"col\">HTML</th>" .
 		"<th class=\"sorttable_nosort\" scope=\"col\">PDF</th>" .
 		"<th class=\"sorttable_nosort\" scope=\"col\">Files</th>" .
 		"<th class=\"sorttable_nosort\" scope=\"col\">colour</th>" .
@@ -55,18 +56,21 @@ if (!$cstarted) {
                 }
 
                 if($cansubmit) {
-                  $link = '<a href="' . $statementUrl . '/'.$row['probid'].'.pdf">';
                   $linkPdf = '<a href="' . $statementUrl . '/'.$row['probid'].'.pdf">';
                   $linkZip = '<a href="' . $statementUrl . '/'.$row['probid'].'.zip">';
+                  $linkHtml = '<a target="_blank" href="' . $statementUrl . '/'.$row['probid'].'.html">';
+                  $link = $linkHtml;
                 } else {
                   $link = '<a>';
                   $linkPdf = '<a>';
                   $linkZip = '<a>';
+                  $linkHtml = '<a>';
                 }
                 echo "<tr class=\"" . implode(' ',$classes) .
                     "\"><td class=\"probid\">" . $link .
                                 htmlspecialchars($row['probid'])."</a>".
                         "</td><td>" . $link . htmlspecialchars($row['name'])."</a>".
+                        "</td><td>" . $linkHtml . '<img src="../images/html.png"></img><u>HTML</u>' ."</a>".
                         "</td><td>" . $linkPdf . '<img src="../images/pdf.png"></img><u>PDF</u>' ."</a>".
                         "</td><td>" . $linkZip . '<img src="../images/zip.png"></img><u>Files</u>' ."</a>".
                         "</td>".
@@ -88,10 +92,22 @@ if (!$cstarted) {
           echo "<tr><td></td></tr>";
           echo "<tr><td>";
           echo "</td><td>" . $link . "<strong>All Problems</strong></a>";
+          echo "</td><td>";
           echo "</td><td>" . $linkPdf . '<img src="../images/pdf.png"></img><u>PDF</u>' ."</a>";
           echo "</td><td>" . $linkZip . '<img src="../images/zip.png"></img><u>Files</u>' ."</a>";
+          echo "</td><td>";
           echo "</td></tr>";
         }
+
+        $linkDoc = '<a target="_blank" href="http://doc.hc2.ch/">';
+        echo "<tr><td></td></tr>";
+        echo "<tr><td>";
+        echo '</td><td>'.$linkDoc.'<strong>Documentation</strong></a>';
+        echo '</td><td>'.$linkDoc.'<img src="../images/html.png"></img><u>HTML</u></a>';
+        echo "</td><td>";
+        echo "</td><td>";
+        echo "</td><td>";
+        echo "</td></tr>";
 	echo "</tbody>\n</table>\n\n";
   }
 }
