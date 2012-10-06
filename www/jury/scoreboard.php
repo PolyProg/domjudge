@@ -41,5 +41,17 @@ foreach(array_keys($score_by_team) as $key) {
   echo "$key=" . $score_by_team[$key] . "|";
 }
 echo "</p>";
+echo "<p style='color:silver'>Penalty per team (for website)<br />";
+//Print a little output for writing ranks to the website
+foreach(array_keys($penalty_by_team) as $key) {
+  echo "$key=" . $penalty_by_team[$key] . "|";
+}
+echo "</p>";
+echo "<p style='color:silver'>Time per team (for website)<br />";
+//Print a little output for writing ranks to the website
+foreach(array_keys($time_by_team) as $key) {
+  echo "$key=" . $time_by_team[$key] . "|";
+}
+echo "</p>";
 
 require(LIBWWWDIR . '/footer.php');

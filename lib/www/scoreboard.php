@@ -11,6 +11,8 @@
 
 $rank_by_team = array();
 $score_by_team = array();
+$penalty_by_team = array();
+$time_by_team = array();
 
 /**
  * The calcScoreRow is in lib/lib.misc.php because it's used by other
@@ -272,9 +274,11 @@ function genScoreBoard($cdata, $jury = FALSE, $filter = NULL) {
 function renderScoreBoardTable($cdata, $sdata, $myteamid = null,
 	$static = FALSE, $limitteams = null, $displayrank = TRUE, $center = FALSE) {
 
-        global $rank_by_team, $score_by_team;
+        global $rank_by_team, $score_by_team, $penalty_by_team, $time_by_team;
         $rank_by_team = array();
         $score_by_team = array();
+        $penalty_by_team = array();
+        $time_by_team = array();
 
 	$cid = $cdata['cid'];
 
@@ -406,6 +410,8 @@ function renderScoreBoardTable($cdata, $sdata, $myteamid = null,
 			'<td class="scorenp">' . jurylink(null,$second_score_row ) . '</td>'.
 			'<td class="scorett">' . jurylink(null,$totals['total_time'] ) . '</td>';
                 $score_by_team[$team]=$totals['num_correct'];
+                $penalty_by_team[$team]=$totals['penalty_time'];
+                $time_by_team[$team]=$totals['total_time'];
 
 		// for each problem
 		foreach ( array_keys($probs) as $prob ) {
