@@ -59,8 +59,8 @@ const int exit_failure = -1;
 typedef long double flt;
 
 /* Default absolute and relative precision: */
-const flt default_abs_prec = 1E-7;
-const flt default_rel_prec = 1E-7;
+const flt default_abs_prec = 1E-6;
+const flt default_rel_prec = 1E-6;
 
 char *progname;
 char *file1name, *file2name;
