@@ -302,7 +302,10 @@ function confirmClar() {
 			$teams = $DB->q('KEYVALUETABLE SELECT login, CONCAT(login, ": ", name) as name
 			                 FROM team
 			                 ORDER BY categoryid ASC, name ASC');
-			$options = array_merge($options,$teams);
+			#$options = array_merge($options,$teams);
+                        $options = $teams;
+                        $options['domjudge-must-select'] = '(select...)';
+                        $options[''] = 'ALL';
 		} else {
 			if ( $clar['sender'] ) {
 				$options[$clar['sender']] = $clar['sender'] .': '.
