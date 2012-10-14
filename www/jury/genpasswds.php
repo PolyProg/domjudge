@@ -17,7 +17,7 @@ requireAdmin();
 <h1>Manage team passwords</h1>
 
 <?php
-$teams = $DB->q('KEYVALUETABLE SELECT login, name FROM team
+$teams = $DB->q('KEYVALUETABLE SELECT login, CONCAT(login, " : ", name) FROM team
                  ORDER BY categoryid ASC, name ASC');
 
 if ( empty($teams) ) {
@@ -26,7 +26,7 @@ if ( empty($teams) ) {
 	exit;
 }
 
-$teams = array_merge(array(''=>'(select one)'),$teams);
+$teams[''] = '(select one)';
 
 switch ( AUTH_METHOD ):
 
