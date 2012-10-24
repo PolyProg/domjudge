@@ -1,0 +1,2 @@
+#!/bin/bash
+diff -bB $2 $3 || true
