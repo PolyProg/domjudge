@@ -5,12 +5,12 @@ require_once("common-config.php");
 // **** CONTEST-DEPENDANT-CONFIGURATION ****
 
 // Secret key to generate the folder names for problem statements.
-define('PROBLEM_STATEMENTS_KEY', 'e8521c41407cf5495b5d16754049b310');
+define('PROBLEM_STATEMENTS_KEY', '7f08ec8e7556168e7d076eeae6daf95e');
 define('PROBLEM_STATEMENTS_LOC', '/domjudge/problems');
 // Are we using HC2-rules (1) or SWERC rules (0)?
-define('HC2_RULES', 0);
+define('HC2_RULES', 1);
 // Name of the contest and URL (for password output)
-define('CONTEST_NAME_PWD', 'ACM VIS+PolyProg Local/Selection Contest');
+define('CONTEST_NAME_PWD', 'Helvetic Coding Contes 2013');
 define('CONTEST_URL_PWD', 'https://ec2.hc2.ch');
 
 // **** END CONTEST-DEPENDANT-CONFIGURATION ****
@@ -73,7 +73,7 @@ $DOMJUDGE_ADMINS = array('domjudge_jury', 'admin');
 //   - EXT... are comma separated additional detected language extensions.
 // This list only needs to be modified when additional languages are
 // added and should be kept in sync with the list in submit-config.h.in.
-define('LANG_EXTS', 'C,c C++,cpp,cc,c++ Java,java Python,py');
+define('LANG_EXTS', 'C,c C++,cpp,cc,c++ Java,java Python,py Text,txt');
 
 // Penalty time in minutes per wrong submission (if finally solved).
 if ( HC2_RULES == 1) {
