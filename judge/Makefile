@@ -3,7 +3,7 @@ TOPDIR=..
 endif
 include $(TOPDIR)/Makefile.global
 
-TARGETS = check_float check_boolfind runjury_boolfind compare runguard runpipe check_arith check_newyear check_sliding
+TARGETS = check_float check_boolfind runjury_boolfind compare runguard runpipe check_arith check_newyear check_sliding check_crypto
 
 judgehost: build
 
@@ -44,7 +44,7 @@ install-judgehost:
 		run run_wrapper run_boolfind runjury_boolfind \
 		compare compare_wrapper compare_float compare_boolfind \
 		check_diff.sh check_float check_boolfind sh-static \
-                check_sliding_puzzle check_arith check_newyear \
+                check_sliding_puzzle check_arith check_newyear check_crypto \
                 compare_sliding_puzzle compare_arith compare_newyear
 	$(INSTALL_DATA) -t $(DESTDIR)$(judgehost_libjudgedir) parse_result.xslt \
 		judgedaemon.main.php printdaemon.main.php
