@@ -1,0 +1,7 @@
+/////////////////////////////
+// DO NOT SUBMIT THIS FILE //
+/////////////////////////////
+
+// function you have to code
+char* ready_for_contest();
+
