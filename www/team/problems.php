@@ -69,9 +69,13 @@ if (!$cstarted) {
                 echo "<tr class=\"" . implode(' ',$classes) .
                     "\"><td class=\"probid\">" . $link .
                                 htmlspecialchars($row['probid'])."</a>".
-                        "</td><td>" . $link . htmlspecialchars($row['name'])."</a>".
-                        "</td><td>" . $linkHtml . '<img src="../images/html.png"></img><u>HTML</u>' ."</a>".
-                        "</td><td>" . $linkPdf . '<img src="../images/pdf.png"></img><u>PDF</u>' ."</a>".
+                        "</td><td>" . $link . htmlspecialchars($row['name'])."</a>";
+                        if(HC2_RULES == 0) {
+                          echo "</td><td>" . $linkHtml . '<img src="../images/html.png"></img><u>HTML</u>' ."</a>";
+                        } else {
+                          echo "</td><td>";
+                        }
+                  echo  "</td><td>" . $linkPdf . '<img src="../images/pdf.png"></img><u>PDF</u>' ."</a>".
                         "</td><td>" . $linkZip . '<img src="../images/zip.png"></img><u>Files</u>' ."</a>".
                         "</td>".
                         ( !empty($row['color'])
