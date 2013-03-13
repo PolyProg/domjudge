@@ -1,0 +1,7 @@
+/////////////////////////////
+// DO NOT SUBMIT THIS FILE //
+/////////////////////////////
+
+// function you have to code
+int place_exit(int N, int M);
+

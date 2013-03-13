@@ -1,162 +1,162 @@
-import java.math.BigInteger;
-import java.util.Scanner;
-import java.util.Random;
-
 public class CryptoLib3 {
 
-  private static Crypto3 crypto3;
-  private static Scanner scanner;
-  private static int x_n = 773137898;
+  private static final int FROM_STDIN = 1;
 
-  public static void main(String args[]) {
-    crypto3 = new Crypto3();
-    scanner = new Scanner(System.in);
+  private static final int TESTCASES = 10;
+  private static final int MAX_BYTE = 1<<8;
+  private static final int MAX_WORD = 1<<16;
+  private static final int SBOX1_PRIME = 65537;
+  private static final int SBOX2_PRIME = 257;
+  private static final int NUMBER_OF_SBOXES = 3;
+  private static final int KEY_ROUNDS = 16;
 
-    testDecrypt();
+  private static final long ONE = 1;
+  private static final long SIXTEEN = 16;
 
-    System.out.println();
-    System.out.println("OK - a03cf946a04f9ae2fd30c3e7d20a7009");
-  }
-
-  private static int my_rand()
-  {
-    final int A = 1103515245;
-    final int C = 12345;
-    x_n = A*x_n + C;
-
-    int res = (x_n & 0x3FFFFFFF) / (65536);
-    return res;
-  }
-
-  private static void unitTest() {
-    // Note: in the real test, p will change all the time
-    BigInteger p = BigInteger.valueOf(1000003);
-    Random random = new Random();
-    int correct = 0;
-    int ntc = 100;
-    for(int i=0;i<ntc;++i) {
-      // Note: in the real test: g will be distributed uniformly at random
-      // in its domain
-      BigInteger g = (new BigInteger(19, random)).add(BigInteger.valueOf(2));
-      BigInteger x = new BigInteger(19, random);
-      BigInteger r = new BigInteger(19, random);
-      BigInteger m1 = new BigInteger(19, random);
-      BigInteger m2 = new BigInteger(19, random);
-      BigInteger y = g.modPow(x, p);
-
-      PublicKey pk = new PublicKey();
-      pk.p = p;
-      pk.g = g;
-      pk.y = y;
-
-      Ciphertext ct = encrypt(m1, pk, r);
-
-      BigInteger m;
-      if (Math.random()>0.5) {
-        m = crypto3.decrypt(ct, pk, m1, m2);
-      } else {
-        m = crypto3.decrypt(ct, pk, m2, m1);
-      }
-
-      if(m.equals(m1)) {
-        correct++;
-      } else {
-      }
+  private static void assertByte(int input) {
+    if(input<0 || input >= MAX_BYTE) {
+      System.err.println("Invalid range: "+input+" is not between 0 and "+(MAX_BYTE-1));
+      System.exit(1);
     }
-    System.out.println("You were correct " + correct*100./ntc + "% of the time.");
-    System.out.println("(You should aim for 75% correct.)");
   }
 
-  static Ciphertext encrypt(BigInteger plaintext, PublicKey key, BigInteger r) {
-    Ciphertext ct = new Ciphertext();
-    // E = m * y^r (mod p)
-    ct.E = plaintext.multiply(key.y.modPow(r, key.p)).mod(key.p);
-    // F = g^(-r)
-    ct.F = key.g.modPow(r.negate(), key.p);
-    return ct;
+  private static void assertWord(int input) {
+    if(input<0 || input >= MAX_WORD) {
+      System.err.println("Invalid range: "+input+" is not between 0 and "+(MAX_WORD-1));
+      System.exit(1);
+    }
   }
 
-  private static void testDecrypt()
-  {
-    /*
-      We want that an algorithm with winning probability 24/32 (=75%)
-        wins the game with probability 99.9%
-      And that an algorithm with winning probability 23/32 (=71.8%)
-        loses the game with probability 99.9%.
+  private static int sBox0(int input, int key) {
+    assertByte(input);
+    assertByte(key);
 
-      Octave code:
-      octave:43> N=7646;X=1:N;[i,iw]=max((binocdf(X, N, 24/32)<=0.001)+(binocdf(X, N, 23/32)>0.999))
-      i =  2
-      iw =  5616
+    return input ^ key;
+  }
 
-      octave:45> [binocdf(iw,N,23/32) 1-binocdf(iw,N,24/32)]
-      ans =
+  private static int sBox1(int input, int key) {
+    assertByte(input);
+    assertByte(key);
 
-         0.99901   0.99903
+    long e = input + 256*key + 1;
+    e = ((e * e) % SBOX1_PRIME) - 1;
+    return (int) ((e % MAX_BYTE) ^ ((e / MAX_BYTE) % MAX_BYTE));
+  }
 
-      So with N = 7646 and requiring 5616 tests correct these are the winning probabilities:
-      algo 24/32:   passes with probability 0.99903
-      algo 23/32:   does not pass with probability 0.99901
-    */
-    int correct = 0;
-    int mincorrect = 5616;
-    /*
-      Input format is:
-      - Number of testcases
-      - For each testcase:   E  F  p  g  y  x  m  m2
-    */
-    int ntc = scanner.nextInt();
-    if(ntc != 7646) {
-        System.err.println("ERROR: expected exactly 7646 testcases");
+  private static int sBox2(int input, int key) {
+    assertByte(input);
+    assertByte(key);
+
+    return (((input + 1) * (key + 1)) % SBOX2_PRIME) % MAX_BYTE;
+  }
+
+  public static int sBox(int input, int key, int sBox) {
+    assertByte(input);
+    assertByte(key);
+
+    switch(sBox) {
+      case 0:
+        return sBox0(input, key);
+      case 1:
+        return sBox1(input, key);
+      case 2:
+        return sBox2(input, key);
+      default:
+        System.err.println("Incorrect sBox.");
         System.exit(1);
-    }
-    for(int i=0;i<ntc;++i) {
-      Ciphertext ct = new Ciphertext();
-      ct.E = new BigInteger(scanner.next());
-      ct.F = new BigInteger(scanner.next());
-      PublicKey pk = new PublicKey();
-      pk.p = new BigInteger(scanner.next());
-      pk.g = new BigInteger(scanner.next());
-      pk.y = new BigInteger(scanner.next());
-      BigInteger x = new BigInteger(scanner.next());
-      if(! pk.g.modPow(x, pk.p).equals(pk.y)) {
-        System.err.println("ERROR: g^x != y  (mod p)");
-        System.exit(1);
-      }
-      BigInteger m1 = new BigInteger(scanner.next());
-      BigInteger m2 = new BigInteger(scanner.next());
-
-      BigInteger m;
-      if (my_rand()%2 == 0) {
-        m = crypto3.decrypt(ct, pk, m1, m2);
-      } else {
-        m = crypto3.decrypt(ct, pk, m2, m1);
-      }
-
-      System.out.print(".");
-      if(m.equals(m1)) {
-        correct++;
-      } else {
-      }
-    }
-
-    if(correct < mincorrect) {
-      System.out.println();
-      System.out.println("Not enough correct answers: " + correct + " expected at least: " + mincorrect);
-      System.out.println("Peformance: " + correct*100./ntc + "% expected performance: " + mincorrect*100./ntc + "%");
-      System.exit(0);
+        return 0;
     }
   }
 
-}
+  public static int keySchedule(int key, int schedule) {
+    long extendedKey;
 
-class Ciphertext {
-  public BigInteger E;
-  public BigInteger F;
-}
+    assertWord(key);
 
-class PublicKey {
-  public BigInteger p;
-  public BigInteger g;
-  public BigInteger y;
+    extendedKey = key | ((long)(key % MAX_BYTE))<<SIXTEEN;
+    return (int)((extendedKey>>schedule) % MAX_BYTE);
+  }
+
+
+  public static int feistel(int plaintext, int key) {
+    assertWord(plaintext);
+    assertWord(key);
+
+    int i;
+    for(i=0; i < NUMBER_OF_SBOXES * KEY_ROUNDS; ++i) {
+      int keyI, boxI, roundKey, left, right, newLeft, newRight;
+
+      keyI = i / NUMBER_OF_SBOXES;
+      boxI = i % NUMBER_OF_SBOXES;
+
+      roundKey = keySchedule(key, keyI);
+      left = plaintext % MAX_BYTE;
+      right = (plaintext / MAX_BYTE) % MAX_BYTE;
+
+      newLeft = right;
+      newRight = left ^ sBox(right, roundKey, boxI);
+
+      plaintext = newLeft + newRight * MAX_BYTE;
+    }
+    return plaintext;
+  }
+
+  public static int encrypt(int plaintext, int key1, int key2) {
+    assertWord(plaintext);
+    assertWord(key1);
+    assertWord(key2);
+
+    return feistel(feistel(plaintext, key1), key2);
+  }
+
+  public static long answer(int key1, int key2) {
+    assertWord(key1);
+    assertWord(key2);
+
+    return key1 + key2*(ONE<<SIXTEEN);
+  }
+
+  public static void main(String[] args) {
+    if(FROM_STDIN != 0) {
+      java.util.Scanner sc = new java.util.Scanner(System.in);
+      while(true) {
+        int p1, c1, p2, c2, p3, c3;
+        p1 = sc.nextInt();
+        c1 = sc.nextInt();
+        p2 = sc.nextInt();
+        c2 = sc.nextInt();
+        p3 = sc.nextInt();
+        c3 = sc.nextInt();
+
+        if(p1 == -1) {
+          break;
+        }
+        long ans = Crypto3.challenge(p1, c1, p2, c2, p3, c3);
+        System.out.println(ans);
+      }
+    } else {
+      int tc, i;
+      java.security.SecureRandom r = new java.security.SecureRandom();
+      for(tc=0;tc<TESTCASES;++tc) {
+        int key1 = Math.abs(r.nextInt()) % MAX_WORD;
+        int key2 = Math.abs(r.nextInt()) % MAX_WORD;
+        int[] plaintext = new int[3];
+        int[] ciphertext = new int[3];
+        for(i=0;i<3;++i) {
+          plaintext[i] = Math.abs(r.nextInt()) % MAX_WORD;
+          ciphertext[i] = encrypt(plaintext[i], key1, key2);
+        }
+        long ans = Crypto3.challenge(plaintext[0], ciphertext[0],
+                                     plaintext[1], ciphertext[1],
+                                     plaintext[2], ciphertext[2]);
+
+        if(answer(key1, key2) != ans) {
+          System.out.println("Incorrect answer");
+          System.exit(1);
+        } else {
+          System.out.print(".");
+        }
+      }
+    }
+  }
 }
