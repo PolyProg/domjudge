@@ -1,94 +1,135 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <gmp.h>
-
 #include "cryptoLib2.h"
 
-#if 0
-static void unitTest() {
-    mpz_t x, r;
-    PublicKey pk;
-    Plaintext orig;
-    Ciphertext ct;
-    Plaintext res;
+static const int TESTCASES = 100000;
+static const int MAX_BYTE = 1<<8;
+static const int MAX_WORD = 1<<16;
+static const int SBOX1_PRIME = 65537;
+static const int SBOX2_PRIME = 257;
+static const int NUMBER_OF_SBOXES = 3;
+static const int KEY_ROUNDS = 16;
 
-    mpz_init_set_si(pk.p, 1000003);
-    mpz_init_set_si(pk.g, 2);
-    mpz_init_set_si(x, 4242);
-    mpz_init_set_si(r, 123456);
-    mpz_init_set_si(orig.m, 654321);
-    mpz_init(pk.y);
-    mpz_init_set_si(ct.E, 509777);
-    mpz_init_set_si(ct.F, 709498);
+static int x_n = 429584; // initial seed
+static int my_rand(void)
+{
+    const int A = 1664525;
+    const int C = 1013904223;
+    x_n = A*x_n + C;
 
-    mpz_powm(pk.y, pk.g, x, pk.p);
-
-    res = decrypt(ct, pk);
-    if (mpz_cmp(res.m, orig.m)!=0) {
-      printf("Decrypt failed (m' != m)\n");
-      gmp_printf("Expected: %Zd\n", orig.m);
-      gmp_printf("Got:      %Zd\n", res.m);
-      exit(0);
-    } else {
-      printf("Unit test OK\n");
-    }
+    return (x_n & 0x3FFFFFFF);
 }
-#endif
 
-static void testDecrypt() {
-    /*
-      Input format is:
-      - Number of testcases
-      - For each testcase:   E  F  p  g  y  x  m  m2
-    */
-    int ntc, i;
-    if(1!=scanf("%d\n", &ntc)) {
-      printf("Input failure.\n");
+static void assertByte(int input) {
+  if(input<0 || input >= MAX_BYTE) {
+    fprintf(stderr, "Invalid range: %d is not between 0 and %d\n",
+            input, MAX_BYTE - 1);
+    exit(1);
+  }
+}
+
+static void assertWord(int input) {
+  if(input<0 || input >= MAX_WORD) {
+    fprintf(stderr, "Invalid range: %d is not between 0 and %d\n",
+            input, MAX_WORD - 1);
+    exit(1);
+  }
+}
+
+static int sBox0(int input, int key) {
+  assertByte(input);
+  assertByte(key);
+
+  return input ^ key;
+}
+
+static int sBox1(int input, int key) {
+  assertByte(input);
+  assertByte(key);
+
+  long long int e = input + 256*key + 1;
+  e = ((e * e) % SBOX1_PRIME) - 1;
+  return (e % MAX_BYTE) ^ ((e / MAX_BYTE) % MAX_BYTE);
+}
+
+static int sBox2(int input, int key) {
+  assertByte(input);
+  assertByte(key);
+
+  return (((input + 1) * (key + 1)) % SBOX2_PRIME) % MAX_BYTE;
+}
+
+int sBox(int input, int key, int sBox) {
+  assertByte(input);
+  assertByte(key);
+
+  switch(sBox) {
+    case 0:
+      return sBox0(input, key);
+    case 1:
+      return sBox1(input, key);
+    case 2:
+      return sBox2(input, key);
+    default:
+      fprintf(stderr, "Incorrect sBox.");
       exit(1);
-    }
-    for(i=0;i<ntc;++i) {
-      Ciphertext ct;
-      PublicKey pk;
-      Plaintext got;
-      mpz_t x;
-      Plaintext m1, m2;
-      mpz_init(ct.E);
-      mpz_init(ct.F);
-      mpz_init(pk.p);
-      mpz_init(pk.g);
-      mpz_init(pk.y);
-      mpz_init(x);
-      mpz_init(m1.m);
-      mpz_init(m2.m);
-      if(8!=gmp_scanf("%Zd %Zd %Zd %Zd %Zd %Zd %Zd %Zd\n", ct.E, ct.F, pk.p, pk.g, pk.y, x, m1.m, m2.m)) {
-        printf("Input failure %d.\n", i);
-        exit(1);
-      }
+  }
+}
 
-      got = decrypt(ct, pk);
-      if(mpz_cmp(got.m, m1.m)!=0) {
-        gmp_printf("\nTestcase %d  Wrong answer: expected %Zd got:\n%Zd\n", i, m1.m, got.m);
-        exit(0);
-      } else {
-        printf("%d.", i);
-      }
-      mpz_clear(got.m);
-      mpz_clear(ct.E);
-      mpz_clear(ct.F);
-      mpz_clear(pk.p);
-      mpz_clear(pk.g);
-      mpz_clear(pk.y);
-      mpz_clear(x);
-      mpz_clear(m1.m);
-      mpz_clear(m2.m);
-    }
+int keySchedule(int key, int schedule) {
+  long long int extendedKey;
+
+  assertWord(key);
+
+  extendedKey = key | (key % MAX_BYTE)<<16LL;
+  return (extendedKey>>schedule) % MAX_BYTE;
+}
+
+
+int feistel(int plaintext, int key) {
+  assertWord(plaintext);
+  assertWord(key);
+
+  int i;
+  for(i=0; i < NUMBER_OF_SBOXES * KEY_ROUNDS; ++i) {
+    int keyI, boxI, roundKey, left, right, newLeft, newRight;
+
+    keyI = i / NUMBER_OF_SBOXES;
+    boxI = i % NUMBER_OF_SBOXES;
+
+    roundKey = keySchedule(key, keyI);
+    left = plaintext % MAX_BYTE;
+    right = (plaintext / MAX_BYTE) % MAX_BYTE;
+
+    newLeft = right;
+    newRight = left ^ sBox(right, roundKey, boxI);
+
+    plaintext = newLeft + newRight * MAX_BYTE;
+  }
+  return plaintext;
+}
+
+int encrypt(int plaintext, int key1, int key2) {
+  assertWord(plaintext);
+  assertWord(key1);
+  assertWord(key2);
+
+  return feistel(feistel(plaintext, key1), key2);
 }
 
 int main(int argc, char** argv) {
-  /*unitTest();*/
-  testDecrypt();
-
-  printf("\n");
-  printf("OK - b3610618a8655c5f433df47560a8239b\n");
+  int tc;
+  for(tc=0;tc<TESTCASES;++tc) {
+    int key1 = my_rand() % MAX_WORD;
+    int key2 = my_rand() % MAX_WORD;
+    int plaintext = my_rand() % MAX_WORD;
+    int ciphertext = encrypt(plaintext, key1, key2);
+    int ans = decrypt(ciphertext, key1, key2);
+    if(plaintext != ans) {
+      printf("Incorrect answer.");
+      return 0;
+    }
+  }
+  printf("OK - 983b6576e1b54131fc6d1c5a6629d176\n");
   return 0;
 }

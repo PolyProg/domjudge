@@ -1,21 +1,18 @@
-#ifndef HC2_CRYPTO_LIB_3_H_
-#define HC2_CRYPTO_LIB_3_H_
+#ifndef _CRYPTO_LIB_3_H_
+#define _CRYPTO_LIB_3_H_
 
-typedef struct Ciphertext_s {
-    mpz_t E;
-    mpz_t F;
-} Ciphertext;
+int encrypt(int plaintext, int key1, int key2);
 
-typedef struct PublicKey_s {
-    mpz_t p;
-    mpz_t g;
-    mpz_t y;
-} PublicKey;
+long long int answer(int key1, int key2);
 
-typedef struct Plaintext_s {
-  mpz_t m;
-} Plaintext;
+// Helper methods
+int sBox(int input, int key, int sBox);
+int keySchedule(int key, int schedule);
+int feistel(int plaintext, int key);
 
-Plaintext decrypt(Ciphertext ct, PublicKey key, Plaintext m1, Plaintext m2);
+// You will have to write the following function:
+long long int challenge(int plaintext1, int ciphertext1,
+                        int plaintext2, int ciphertext2,
+                        int plaintext3, int ciphertext3);
 
-#endif
+#endif  //_CRYPTO_LIB_3_H_

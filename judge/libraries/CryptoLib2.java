@@ -1,93 +1,136 @@
-import java.math.BigInteger;
-import java.util.Scanner;
-
 public class CryptoLib2 {
 
-  private static Crypto2 crypto2;
-  private static Scanner scanner;
+  private static final int TESTCASES = 100000;
+  private static final int MAX_BYTE = 1<<8;
+  private static final int MAX_WORD = 1<<16;
+  private static final int SBOX1_PRIME = 65537;
+  private static final int SBOX2_PRIME = 257;
+  private static final int NUMBER_OF_SBOXES = 3;
+  private static final int KEY_ROUNDS = 16;
 
-  public static void main(String args[]) {
-    crypto2 = new Crypto2();
-    scanner = new Scanner(System.in);
+  private static int x_n = 429584; // initial seed
 
-    testDecrypt();
-
-    System.out.println();
-    System.out.println("OK - b3610618a8655c5f433df47560a8239b");
-  }
-
-  private static void unitTest() {
-    BigInteger p = BigInteger.valueOf(1000003);
-    BigInteger g = BigInteger.valueOf(2);
-    BigInteger x = BigInteger.valueOf(4242);
-    BigInteger r = BigInteger.valueOf(123456);
-    BigInteger m = BigInteger.valueOf(654321);
-    BigInteger y = g.modPow(x, p);
-
-    PublicKey pk = new PublicKey();
-    pk.p = p;
-    pk.g = g;
-    pk.y = y;
-
-    Ciphertext ct = new Ciphertext();
-    ct.E = BigInteger.valueOf(509777);
-    ct.F =BigInteger.valueOf(709498);
-    BigInteger mp = crypto2.decrypt(ct, pk);
-    if (! mp.equals(m)) {
-      System.err.println("Decrypt failed (m' != m).");
-      System.err.println("Expected: " + m);
-      System.err.println("Got:      " + mp);
-      System.exit(0);
-    } else {
-      System.out.println("OK");
-    }
-  }
-
-  private static void testDecrypt()
+  private static int my_rand()
   {
-    /*
-      Input format is:
-      - Number of testcases
-      - For each testcase:   E  F  p  g  y  x  m  m2
-    */
-    int ntc = scanner.nextInt();
-    for(int i=0;i<ntc;++i) {
-      Ciphertext ct = new Ciphertext();
-      ct.E = new BigInteger(scanner.next());
-      ct.F = new BigInteger(scanner.next());
-      PublicKey pk = new PublicKey();
-      pk.p = new BigInteger(scanner.next());
-      pk.g = new BigInteger(scanner.next());
-      pk.y = new BigInteger(scanner.next());
-      BigInteger x = new BigInteger(scanner.next());
-      if(! pk.g.modPow(x, pk.p).equals(pk.y)) {
-        System.err.println("ERROR: g^x != y  (mod p)");
-        System.exit(1);
-      }
+      final int A = 1664525;
+      final int C = 1013904223;
+      x_n = A*x_n + C;
 
-      BigInteger m = crypto2.decrypt(ct, pk);
-      BigInteger expectedM = new BigInteger(scanner.next());
-      scanner.next(); // Remove m2 which we don't need for this test.
-      if(! m.equals(expectedM)) {
-        System.out.println();
-        System.out.println("Testcase " + i + "  Wrong answer: expected " + expectedM + " got:");
-        System.out.println(m);
-        System.exit(0);
-      } else {
-        System.out.print(i+".");
-      }
+      return (x_n & 0x3FFFFFFF);
+  }
+
+  private static final long ONE = 1;
+  private static final long SIXTEEN = 16;
+
+  private static void assertByte(int input) {
+    if(input<0 || input >= MAX_BYTE) {
+      System.err.println("Invalid range: "+input+" is not between 0 and "+(MAX_BYTE-1));
+      System.exit(1);
     }
   }
 
-}
+  private static void assertWord(int input) {
+    if(input<0 || input >= MAX_WORD) {
+      System.err.println("Invalid range: "+input+" is not between 0 and "+(MAX_WORD-1));
+      System.exit(1);
+    }
+  }
 
-class Ciphertext {
-  public BigInteger E;
-  public BigInteger F;
-}
+  private static int sBox0(int input, int key) {
+    assertByte(input);
+    assertByte(key);
 
-class PublicKey {
-  public BigInteger p;
-  public BigInteger g;
-  public BigInteger y;
+    return input ^ key;
+  }
+
+  private static int sBox1(int input, int key) {
+    assertByte(input);
+    assertByte(key);
+
+    long e = input + 256*key + 1;
+    e = ((e * e) % SBOX1_PRIME) - 1;
+    return (int) ((e % MAX_BYTE) ^ ((e / MAX_BYTE) % MAX_BYTE));
+  }
+
+  private static int sBox2(int input, int key) {
+    assertByte(input);
+    assertByte(key);
+
+    return (((input + 1) * (key + 1)) % SBOX2_PRIME) % MAX_BYTE;
+  }
+
+  public static int sBox(int input, int key, int sBox) {
+    assertByte(input);
+    assertByte(key);
+
+    switch(sBox) {
+      case 0:
+        return sBox0(input, key);
+      case 1:
+        return sBox1(input, key);
+      case 2:
+        return sBox2(input, key);
+      default:
+        System.err.println("Incorrect sBox.");
+        System.exit(1);
+        return 0;
+    }
+  }
+
+  public static int keySchedule(int key, int schedule) {
+    long extendedKey;
+
+    assertWord(key);
+
+    extendedKey = key | ((long)(key % MAX_BYTE))<<SIXTEEN;
+    return (int)((extendedKey>>schedule) % MAX_BYTE);
+  }
+
+
+  public static int feistel(int plaintext, int key) {
+    assertWord(plaintext);
+    assertWord(key);
+
+    int i;
+    for(i=0; i < NUMBER_OF_SBOXES * KEY_ROUNDS; ++i) {
+      int keyI, boxI, roundKey, left, right, newLeft, newRight;
+
+      keyI = i / NUMBER_OF_SBOXES;
+      boxI = i % NUMBER_OF_SBOXES;
+
+      roundKey = keySchedule(key, keyI);
+      left = plaintext % MAX_BYTE;
+      right = (plaintext / MAX_BYTE) % MAX_BYTE;
+
+      newLeft = right;
+      newRight = left ^ sBox(right, roundKey, boxI);
+
+      plaintext = newLeft + newRight * MAX_BYTE;
+    }
+    return plaintext;
+  }
+
+  public static int encrypt(int plaintext, int key1, int key2) {
+    assertWord(plaintext);
+    assertWord(key1);
+    assertWord(key2);
+
+    return feistel(feistel(plaintext, key1), key2);
+  }
+
+  public static void main(String[] args) {
+    int tc, i;
+    for(tc=0;tc<TESTCASES;++tc) {
+      int key1 = Math.abs(my_rand()) % MAX_WORD;
+      int key2 = Math.abs(my_rand()) % MAX_WORD;
+      int plaintext = Math.abs(my_rand()) % MAX_WORD;
+      int ciphertext = encrypt(plaintext, key1, key2);
+      int ans = Crypto2.decrypt(ciphertext, key1, key2);
+      if(plaintext != ans) {
+        System.out.println("Incorrect answer");
+        System.exit(0);
+      }
+    }
+    System.out.print("OK - 983b6576e1b54131fc6d1c5a6629d176\n");
+  }
 }
