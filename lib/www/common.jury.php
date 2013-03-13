@@ -152,6 +152,27 @@ if (!function_exists('parse_ini_string')) {
  */
 function importZippedProblem($zip, $probid = NULL)
 {
+        // Add multiple problems
+        $probidfromzip = NULL;
+        if($probid == NULL) {
+              for ($j = 0; $j < $zip->numFiles; $j++) {
+                  $filename = $zip->getNameIndex($j);
+                  if ( ends_with($filename, ".zip") ) {
+                      if ( !($tmpfname = mkstemps(TMPDIR."/subzip-XXXXXX",0)) ) {
+                              error("Could not create temporary file.");
+                      }
+                      file_put_contents($tmpfname, $zip->getFromIndex($j));
+                      $subzip = openZipFile($tmpfname);
+                      $probidfromzip = importZippedProblem($subzip, NULL);
+                      $subzip->close();
+                      unlink($tmpfname);
+                  }
+              }
+        }
+        if($probidfromzip != NULL) {
+          return $probidfromzip;
+        }
+
 	global $DB;
 	$prop_file = 'domjudge-problem.ini';
 
