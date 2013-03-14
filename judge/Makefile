@@ -43,6 +43,7 @@ install-judgehost:
 		compile*.sh testcase_run.sh chroot-startstop.sh \
 		run run_wrapper run_boolfind runjury_boolfind \
 		compare compare_wrapper compare_float compare_boolfind \
+                compare_crypto \
 		check_diff.sh check_float check_boolfind sh-static \
                 check_sliding_puzzle check_arith check_newyear check_crypto \
                 compare_sliding_puzzle compare_arith compare_newyear
