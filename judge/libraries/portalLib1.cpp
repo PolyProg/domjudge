@@ -6,7 +6,7 @@
 #include<stdlib.h>
 #include<string.h>
 
-#include"portalLib1.h"
+#include"portalLib1.hpp"
 
 #define	NSPEEDS		1000
 

@@ -8,7 +8,7 @@
 #include<iterator>
 #include<stdlib.h>
 
-#include"portalLib2.h"
+#include"portalLib3.hpp"
 using namespace std;
 
 #define MAX_OBS		200000
@@ -47,5 +47,5 @@ int main(){
 			}
 		}
 	}
-	printf("CORRECT\n");
+	printf("OK - 6673454bb0eb6491f54407deed2b7a23\n");
 }
