@@ -16,25 +16,18 @@ const int CODE_NO_CONNECTION = -4;
 const int CODE_TOO_LONG_DIST = -5;
 const int CODE_TOUR_EXCESS = -6;
 
-static int checkSolution(int n, int m, const vector<connection> & schemeAsList, const pair<vector<int>, vector<int> > & teamAnswer) {
-	vector<vector <int> > scheme;
-	scheme.clear();
-	for(int i = 0; i < n; i++)
-		scheme.push_back(vector<int>());
-	for (int i = 0; i < m; i++) {
-		int a, b;
-		a = schemeAsList[i].a-1;
-		b = schemeAsList[i].b-1;
-		scheme[a].push_back(b);
-		scheme[b].push_back(a);
-	}
+static int checkSolution(int n, int m, const vector<connection> & scheme, const pair<vector<int>, vector<int> > & teamAnswer) {
 #define colors teamAnswer.first
 #define tour teamAnswer.second
 	// create set out of list of connections
 	set <pair <int, int> > s;
-	for (int i = 0; i < n; i++)
-		for (int j = 0; j < (int) scheme[i].size(); j++)
-			s.insert(make_pair(i, scheme[i][j]));
+	int a, b;
+	for (int i = 0; i < m; i++) {
+		a = scheme[i].a-1;
+		b = scheme[i].b-1;
+		s.insert(make_pair(a,b));
+		s.insert(make_pair(b,a));
+	}
 	
 	if ((int) colors.size() != n)
 		return CODE_SIZE_MISMATCH;
