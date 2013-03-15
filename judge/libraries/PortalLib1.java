@@ -2,6 +2,15 @@
 // DO NOT SUBMIT THIS FILE //
 /////////////////////////////
 
+public class Cube{
+	public int x;
+	public int y;
+	public Cube(int setx, int sety){
+		x = setx;
+		y = sety;
+	}
+}
+
 public class PortalLib1 {
 	public static final int NSPEEDS = 1000;
 	
