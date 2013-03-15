@@ -2,7 +2,7 @@
 // DO NOT SUBMIT THIS FILE //
 /////////////////////////////
 
-public class Cube{
+class Cube{
 	public int x;
 	public int y;
 	public Cube(int setx, int sety){
