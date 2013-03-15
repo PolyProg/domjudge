@@ -2,7 +2,7 @@ public class CryptoLib3 {
 
   private static final int FROM_STDIN = 1;
 
-  private static final int TESTCASES = 5;
+  private static final int TESTCASES = 10;
   private static final int MAX_BYTE = 1<<8;
   private static final int MAX_WORD = 1<<16;
   private static final int SBOX1_PRIME = 65537;
