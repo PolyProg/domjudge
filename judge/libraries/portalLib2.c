@@ -45,4 +45,5 @@ int main(){
 		}
 	}
 	printf("OK - 6673454bb0eb6491f54407deed2b7a23\n");
+	return 0;
 }
