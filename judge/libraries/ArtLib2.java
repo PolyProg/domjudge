@@ -139,3 +139,23 @@ class InputReader {
 		return Integer.parseInt(next());
 	}
 }
+
+class Connexion {
+	public int a;
+	public int b;
+	
+	Connexion(int a_value, int b_value) {
+		a = a_value; 
+		b = b_value; 
+	}
+}
+
+class Pair<F, S> {         
+	public final F f;
+	public final S s;
+
+	public Pair(F f, S s) {         
+		this.f = f;
+		this.s = s;
+	}
+}

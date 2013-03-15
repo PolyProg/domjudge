@@ -112,4 +112,15 @@ class InputReader {
 	public int nextInt() {
 		return Integer.parseInt(next());
 	}
+
+}
+
+class Connexion {
+	public int a;
+	public int b;
+	
+	Connexion(int a_value, int b_value) {
+		a = a_value; 
+		b = b_value; 
+	}
 }
