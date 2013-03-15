@@ -11,7 +11,7 @@ class Cube{
 	}
 }
 
-public class PortalLib2 {
+public class PortalLib3 {
 	public static final int MAX_OBS = 200000;
 
 	public static void main(String args[]){
@@ -35,7 +35,7 @@ public class PortalLib2 {
 				obstacles[j].x = sc.nextInt(); obstacles[j].y = sc.nextInt(); 
 			}
 			// team initialize
-			Portal2.initialize(gate, nob, obstacles);
+			Portal3.initialize(gate, nob, obstacles);
 			while (nsol-->0){
 				sol = sc.nextInt();
 				speedsJudge.add(sol);
@@ -43,7 +43,7 @@ public class PortalLib2 {
 			for (int j=0; j<nsp; j++){
 				speed = sc.nextDouble();
 				// team queries
-				teamAnswer = Portal2.check_speed(speed);
+				teamAnswer = Portal3.check_speed(speed);
 				if (teamAnswer!=0 && !speedsJudge.contains(j)){
 					System.out.printf("INCORRECT - Test case %d speed %f is bad.\n",i+1,speed);
 					System.exit(0);
