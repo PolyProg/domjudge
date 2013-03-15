@@ -58,7 +58,11 @@ if (!$cstarted) {
                 if($cansubmit) {
                   $linkPdf = '<a href="' . $statementUrl . '/'.$row['probid'].'.pdf">';
                   $linkZip = '<a href="' . $statementUrl . '/'.$row['probid'].'.zip">';
-                  $linkHtml = '<a target="_blank" href="' . $statementUrl . '/'.$row['probid'].'.html">';
+                  if (HC2_RULES == 0) {
+                    $linkHtml = '<a target="_blank" href="' . $statementUrl . '/'.$row['probid'].'.html">';
+                  } else {
+                    $linkHtml = '<a>';
+                  }
                   $link = $linkHtml;
                 } else {
                   $link = '<a>';

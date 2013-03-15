@@ -9,7 +9,7 @@ using namespace std;
 #define FROM_STDIN 1
 #endif
 
-static const int TESTCASES = 5;
+static const int TESTCASES = 10;
 static const int MAX_BYTE = 1<<8;
 static const int MAX_WORD = 1<<16;
 static const int SBOX1_PRIME = 65537;

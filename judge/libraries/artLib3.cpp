@@ -10,8 +10,8 @@
 using namespace std;
 
 const int CODE_SIZE_MISMATCH = -1;
-int CODE_FIRST_CREATURE_NOT_HEIDI = -2;
-int CODE_NEGATIVE_MARMOT = -3;
+const int CODE_FIRST_CREATURE_NOT_HEIDI = -2;
+const int CODE_NEGATIVE_MARMOT = -3;
 const int CODE_NO_FRIENDSHIP = -4;
 
 static int checkSolution(int n, const vector<connection> & scheme, const vector<int> & teamAnswer) {
@@ -66,7 +66,7 @@ int main() {
 		vector<int> teamAnswer = arrange_marmots(n, scheme);
 		int checkResult = checkSolution(n, scheme, teamAnswer);
 		if (checkResult) {
-			printf ("INCORRECT - Test case %d: ", tt+1);
+			printf("INCORRECT - Test case %d: ", tt+1);
 			if (checkResult == CODE_SIZE_MISMATCH)
 				printf("tour size mismatch, received %d, expected %d", (int) teamAnswer.size(), n+1);
 			else if (checkResult == CODE_FIRST_CREATURE_NOT_HEIDI)
