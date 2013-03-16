@@ -15,7 +15,7 @@ public class CyberspaceLib2 {
   private static int judge_place_exit(int N, int M){
           int best=(1<<M)-1;
           for (int i=0; i<=(1<<10); i++)
-                  if ( count_bits(i)==M && Math.min(i+i-N,N-i-i)<Math.min(best+best-N,N-best-best) )
+                  if ( count_bits(i)==M && Math.abs(i+i-N)<Math.abs(N-best-best) )
                           best = i;
           return best;
   }

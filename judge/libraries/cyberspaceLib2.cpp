@@ -18,10 +18,15 @@ static int count_bits(int n){
 	return cnt;
 }
 
+static int myabs(int a) {
+  if(a<0)
+     return -a;
+  return a;
+}
 static int judge_place_exit(int N, int M){
 	int best((1<<M)-1);
 	for (int i=0; i<=(1<<10); i++)
-		if ( count_bits(i)==M && min(i+i-N,N-i-i)<min(best+best-N,N-best-best) )
+		if ( count_bits(i)==M && myabs(i+i-N)<myabs(best+best-N) )
 			best = i;
 	return best;
 }
