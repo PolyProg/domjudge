@@ -85,6 +85,8 @@ public class QuarantineLib3 {
                                   c1 = my_rand()%N;
                                   r2 = my_rand()%N;
                                   c2 = my_rand()%N;
+                                  if(r1>r2){int t=r1;r1=r2;r2=t;}
+                                  if(c1>c2){int t=c1;c1=c2;c2=t;}
                                   Quarantine3.toggle(r1,c1,r2,c2);
                                   judge_toggle(r1,c1,r2,c2);
                           }
