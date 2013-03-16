@@ -93,6 +93,8 @@ int main(){
 				c1 = my_rand()%N;
 				r2 = my_rand()%N;
 				c2 = my_rand()%N;
+				if (c1>c2) swap(c1,c2);
+				if (r1>r2) swap(r1,r2);
 				toggle(r1,c1,r2,c2);
 				judge_toggle(r1,c1,r2,c2);
 			}
