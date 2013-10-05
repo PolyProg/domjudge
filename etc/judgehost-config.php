@@ -21,9 +21,9 @@ define('COMPILETIME', 30);
 // Maximum memory usage by RUNUSER in kB
 // This includes the shell which starts the compiled solution and
 // also any interpreter like Oracle (Sun) 'java', which takes 200MB away!
-define('MEMLIMIT', 524288);
-define('MEMLIMIT_C', 65536);    // 64M
-define('MEMLIMIT_JAVA', 98304); // 96M
+define('MEMLIMIT', 720896);
+define('MEMLIMIT_C', 262144);    // 256MB
+define('MEMLIMIT_JAVA', 393216); // 384M
 
 // Maximum filesize RUNUSER may write in kB
 // This should be greater than the maximum testdata output, otherwise
