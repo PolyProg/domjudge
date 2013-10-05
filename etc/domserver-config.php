@@ -5,10 +5,10 @@ require_once("common-config.php");
 // **** CONTEST-DEPENDANT-CONFIGURATION ****
 
 // Secret key to generate the folder names for problem statements.
-define('PROBLEM_STATEMENTS_KEY', '7f08ec8e7556168e7d076eeae6daf95e');
+define('PROBLEM_STATEMENTS_KEY', 'd2d9f36da9c3a28e68d9a6d519a504c22e505955');
 define('PROBLEM_STATEMENTS_LOC', '/domjudge/problems');
 // Are we using HC2-rules (1) or SWERC rules (0)?
-define('HC2_RULES', 1);
+define('HC2_RULES', 0);
 // Name of the contest and URL (for password output)
 define('CONTEST_NAME_PWD', 'Helvetic Coding Contes 2013');
 define('CONTEST_URL_PWD', 'https://ec2.hc2.ch');
