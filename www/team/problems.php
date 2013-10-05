@@ -92,7 +92,8 @@ if (!$cstarted) {
                         echo "</td></tr>\n";
 
 	}
-        if (HC2_RULES == '0') {
+        //if (HC2_RULES == '0') {
+        if (false) {
           $statementUrl = problemStatementUrl('all');
           $link = '<a href="' . $statementUrl . '/all.pdf">';
           $linkPdf = '<a href="' . $statementUrl . '/all.pdf">';
