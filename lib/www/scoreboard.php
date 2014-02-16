@@ -292,6 +292,7 @@ function renderScoreBoardTable($cdata, $sdata, $myteamid = null, $static = FALSE
 
 	// configuration
 	$SHOW_AFFILIATIONS = dbconfig_get('show_affiliations', 1);
+	$SHOW_COUNTRY      = dbconfig_get('show_country', 1);
 	$SHOW_PENDING      = dbconfig_get('show_pending', 0);
 
 	echo '<table class="scoreboard' . (IS_JURY ? ' scoreboard_jury' : '') . ($center ? ' center' : '') . "\">\n";
@@ -380,7 +381,7 @@ function renderScoreBoardTable($cdata, $sdata, $myteamid = null, $static = FALSE
 				} else {
 					echo htmlspecialchars($teams[$team]['affilid']);
 				}
-				if ( isset($teams[$team]['country']) ) {
+				if ( $SHOW_COUNTRY && isset($teams[$team]['country']) ) {
 					$countryflag = '../images/countries/' .
 						urlencode($teams[$team]['country']) . '.png';
 					echo ' ';
