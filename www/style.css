@@ -207,8 +207,9 @@ legend {
 .score_incorrect { background: #FF6666; }
 
 #scoresolv,#scoretotal { width: 5em; }
-.scorenc,.scorett,.scorepl { text-align: right; width: 2ex; }
+.scorenc,.scorett,.scorepl,.scorenp { text-align: right; width: 2ex; }
 td.scorenc { border-color: silver; }
+td.scorenp { border-color: silver; }
 
 .scoreprob { width: 7em; }
 .scoreaffil { text-align: center; }
