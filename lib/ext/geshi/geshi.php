@@ -1470,7 +1470,7 @@ class GeSHi {
                 'cadlisp' => array(),
                 'cdfg' => array('cdfg'),
                 'cobol' => array('cbl'),
-                'cpp' => array('cpp', 'hpp', 'C', 'H', 'CPP', 'HPP'),
+                'cpp' => array('cpp', 'hpp', 'C', 'H', 'CPP', 'HPP', 'c11', 'C11'),
                 'csharp' => array('cs'),
                 'css' => array('css'),
                 'd' => array('d'),
