@@ -187,6 +187,7 @@ CREATE TABLE `language` (
 
 CREATE TABLE `problem` (
   `probid` varchar(8) NOT NULL COMMENT 'Unique ID (string)',
+  `depends` varchar(8) default NULL COMMENT 'You must solve the problem referenced there to be able to see the description',
   `cid` int(4) unsigned NOT NULL COMMENT 'Contest ID',
   `name` varchar(255) NOT NULL COMMENT 'Descriptive name',
   `allow_submit` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT 'Are submissions accepted for this problem?',
@@ -194,13 +195,36 @@ CREATE TABLE `problem` (
   `timelimit` int(4) unsigned NOT NULL DEFAULT '0' COMMENT 'Maximum run time for this problem',
   `special_run` varchar(25) DEFAULT NULL COMMENT 'Script to run submissions for this problem',
   `special_compare` varchar(25) DEFAULT NULL COMMENT 'Script to compare problem and jury output for this problem',
+  `library_prefix` varchar(255) default NULL COMMENT 'Name of the file (without extension) that will be compiled along with the source code',
   `color` varchar(25) DEFAULT NULL COMMENT 'Balloon colour to display on the scoreboard',
   `problemtext` longblob COMMENT 'Problem text in HTML/PDF/ASCII',
   `problemtext_type` varchar(4) DEFAULT NULL COMMENT 'File type of problem text',
+  `problemdata` longblob COMMENT 'Data for contestant as ZIP archive',
+  `problemlib` longblob COMMENT 'Libraries that need to be present to compile problem as ZIP archive',
   PRIMARY KEY  (`probid`),
   KEY `cid` (`cid`),
-  CONSTRAINT `problem_ibfk_1` FOREIGN KEY (`cid`) REFERENCES `contest` (`cid`) ON DELETE CASCADE
+  CONSTRAINT `problem_ibfk_1` FOREIGN KEY (`cid`) REFERENCES `contest` (`cid`) ON DELETE CASCADE,
+  CONSTRAINT `problem_ibfk_2` FOREIGN KEY (`depends`) REFERENCES `problem` (`probid`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Problems the teams can submit solutions for';
+
+--
+-- Table structure for table `printout`
+--
+
+CREATE TABLE `printout` (
+  `submitid` int(4) unsigned NOT NULL auto_increment COMMENT 'Unique ID',
+  `cid` int(4) unsigned NOT NULL COMMENT 'Contest ID',
+  `teamid` varchar(15) NOT NULL COMMENT 'Team login',
+  `submittime` datetime NOT NULL COMMENT 'Time submitted',
+  `sourcecode` mediumblob NOT NULL COMMENT 'Full source code',
+  `printed` tinyint(1) unsigned NOT NULL default '0' COMMENT 'If true, then this file has been printed already',
+  `delivered` tinyint(1) unsigned NOT NULL default '0' COMMENT 'If true, then this printout has been delivered already',
+  PRIMARY KEY  (`submitid`),
+  KEY `teamid` (`cid`,`teamid`),
+  KEY `teamid_2` (`teamid`),
+  CONSTRAINT `printout_ibfk_1` FOREIGN KEY (`cid`) REFERENCES `contest` (`cid`) ON DELETE CASCADE,
+  CONSTRAINT `printout_ibfk_2` FOREIGN KEY (`teamid`) REFERENCES `team` (`login`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='All incoming printouts' AUTO_INCREMENT=5000;
 
 --
 -- Table structure for table `scoreboard_jury`
