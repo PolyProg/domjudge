@@ -11,5 +11,5 @@ require('init.php');
 $id = @$_REQUEST['id'];
 if ( ! preg_match('/^' . IDENTIFIER_CHARS . '*$/', $id) ) error("Invalid problem id");
 
-putProblemText($id);
+putProblemText($id, "problemtext");
 

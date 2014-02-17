@@ -15,7 +15,8 @@ echo "<h1>Problems</h1>\n\n";
 
 // Select all data, sort problems from the current contest on top.
 $res = $DB->q('SELECT p.probid,p.name,p.allow_submit,p.allow_judge,p.timelimit,p.color,
-               p.problemtext_type, c.*, COUNT(testcaseid) AS testcases
+               p.problemtext_type,p.problemdata_type,p.problemlib_type,p.depends,
+               c.*, COUNT(testcaseid) AS testcases
                FROM problem p
                NATURAL JOIN contest c
                LEFT JOIN testcase USING (probid)
@@ -32,7 +33,10 @@ if( $res->count() == 0 ) {
 	     "<th scope=\"col\">time<br />limit</th>" .
 	     "<th class=\"sorttable_nosort\" scope=\"col\">colour</th>" .
 	     "<th scope=\"col\">test<br />cases</th>" .
-	     "<th scope=\"col\"></th>" .
+	     "<th scope=\"col\">Depends</th>" .
+	     "<th scope=\"col\">Text</th>" .
+	     "<th scope=\"col\">Data</th>" .
+	     "<th scope=\"col\">Lib</th>" .
 	    ( IS_ADMIN ? "<th scope=\"col\"></th>" : '' ) .
 	     "</tr></thead>\n<tbody>\n";
 
@@ -68,10 +72,28 @@ if( $res->count() == 0 ) {
 			: '<td>' . $link . '&nbsp;</a>' );
 		echo "</td><td><a href=\"testcase.php?probid=" . $row['probid'] .
 		    "\">" . $row['testcases'] . "</a></td>";
+
+		echo "<td class=\"probid\">" . $link .  htmlspecialchars($row['depends'])."</a>"."</td>";
 		if ( !empty($row['problemtext_type']) ) {
 			echo '<td title="view problem description">' .
 			     '<a href="problem.php?id=' . urlencode($row['probid']) .
 			     '&amp;cmd=viewtext"><img src="../images/' . urlencode($row['problemtext_type']) .
+			     '.png" alt="problem text" /></a></td>';
+		} else {
+			echo '<td></td>';
+		}
+		if ( !empty($row['problemdata_type']) ) {
+			echo '<td title="view problem data for contestant">' .
+			     '<a href="problem.php?id=' . urlencode($row['probid']) .
+			     '&amp;cmd=viewdata"><img src="../images/' . urlencode($row['problemdata_type']) .
+			     '.png" alt="problem text" /></a></td>';
+		} else {
+			echo '<td></td>';
+		}
+		if ( !empty($row['problemlib_type']) ) {
+			echo '<td title="view problem library for judge">' .
+			     '<a href="problem.php?id=' . urlencode($row['probid']) .
+			     '&amp;cmd=viewlib"><img src="../images/' . urlencode($row['problemlib_type']) .
 			     '.png" alt="problem text" /></a></td>';
 		} else {
 			echo '<td></td>';

@@ -44,6 +44,18 @@ if ( !empty($pcmd) ) {
 		        WHERE probid = %s', $id);
 		auditlog('problem', $id, 'delete problem text');
 	}
+
+	if ( isset($pcmd['delete_data']) ) {
+		$DB->q('UPDATE problem SET problemdata = NULL, problemdata_type = NULL
+		        WHERE probid = %s', $id);
+		auditlog('problem', $id, 'delete problem data');
+	}
+
+	if ( isset($pcmd['delete_lib']) ) {
+		$DB->q('UPDATE problem SET problemlib = NULL, problemlib_type = NULL
+		        WHERE probid = %s', $id);
+		auditlog('problem', $id, 'delete problem lib');
+	}
 }
 if ( isset($_POST['upload']) ) {
 	if ( !empty($_FILES['problem_archive']['tmp_name'][0]) ) {
@@ -65,7 +77,9 @@ if ( isset($_POST['upload']) ) {
 }
 
 // This doesn't return, call before sending headers
-if ( isset($cmd) && $cmd == 'viewtext' ) putProblemText($id);
+if ( isset($cmd) && $cmd == 'viewtext' ) putProblemText($id, "problemtext");
+if ( isset($cmd) && $cmd == 'viewdata' ) putProblemText($id, "problemdata");
+if ( isset($cmd) && $cmd == 'viewlib' )  putProblemText($id, "problemlib");
 
 $jscolor=true;
 
@@ -84,7 +98,7 @@ if ( !empty($cmd) ):
 	if ( $cmd == 'edit' ) {
 		echo "<tr><td>Problem ID:</td><td class=\"probid\">";
 		$row = $DB->q('TUPLE SELECT p.probid,p.cid,p.name,p.allow_submit,p.allow_judge,
-	                                    p.timelimit,p.special_run,p.special_compare,p.color,
+	                                    p.timelimit,p.special_run,p.special_compare,p.depends,p.color,
 	                                    COUNT(testcaseid) AS testcases
 		               FROM problem p
 		               LEFT JOIN testcase USING (probid)
@@ -137,12 +151,25 @@ src="../images/b_help.png" class="smallpicto" alt="?" /></a></td></tr>
 <tr><td><label for="data_0__problemtext_">Problem text:</label></td>
 <td><?php echo addFileField('data[0][problemtext]', 30, ' accept="text/plain,text/html,application/pdf"')?></td></tr>
 
+<tr><td><label for="data_0__problemdata_">Problem data for contestants:</label></td>
+<td><?php echo addFileField('data[0][problemdata]', 30, ' accept="application/zip,application/octet-stream"')?></td></tr>
+
+<tr><td><label for="data_0__problemlib_">Problem library for judge:</label></td>
+<td><?php echo addFileField('data[0][problemlib]', 30, ' accept="application/zip,application/octet-stream"')?></td></tr>
+
 <tr><td><label for="data_0__special_run_">Special run script:</label></td>
 <td><?php echo addInput('data[0][special_run]', @$row['special_run'], 30, 25)?></td></tr>
 
 <tr><td><label for="data_0__special_compare_">Special compare script:</label></td>
 <td><?php echo addInput('data[0][special_compare]', @$row['special_compare'], 30, 25)?></td></tr>
 
+<tr><td><label for="data_0__depends_">Depends:</label></td>
+<td><?php
+$deppmap = $DB->q("KEYVALUETABLE SELECT probid,CONCAT(cid, ' ', probid) FROM problem ORDER BY cid DESC, probid");
+$deppmap[""] = "(None)";
+echo addSelect('data[0][depends]', $deppmap, @$row['depends'], true);
+?>
+</td></tr>
 </table>
 
 <?php
@@ -171,7 +198,8 @@ endif;
 
 $data = $DB->q('TUPLE SELECT p.probid,p.cid,p.name,p.allow_submit,p.allow_judge,
                              p.timelimit,p.special_run,p.special_compare,p.color,
-                             p.problemtext_type,c.contestname, count(rank) AS ntestcases
+                             p.problemtext_type,p.problemdata_type,p.problemlib_type,
+                             c.contestname,p.depends,count(rank) AS ntestcases
                 FROM problem p
                 NATURAL JOIN contest c
                 LEFT JOIN testcase USING (probid)
@@ -229,6 +257,24 @@ if ( !empty($data['problemtext_type']) ) {
 	              "return confirm('Delete problem description text?')") .
 	    "</td></tr>\n";
 }
+if ( !empty($data['problemdata_type']) ) {
+	echo '<tr><td>Problem data for contestants:</td><td class="nobreak"><a href="problem.php?id=' .
+	    urlencode($id) . '&amp;cmd=viewdata"><img src="../images/' .
+	    urlencode($data['problemdata_type']) . '.png" alt="problem data" ' .
+	    'title="view problem data for contestants" /></a> ' .
+	    addSubmit('delete', 'cmd[delete_data]',
+	              "return confirm('Delete problem data for contestants?')") .
+	    "</td></tr>\n";
+}
+if ( !empty($data['problemlib_type']) ) {
+	echo '<tr><td>Problem library for judge:</td><td class="nobreak"><a href="problem.php?id=' .
+	    urlencode($id) . '&amp;cmd=viewlib"><img src="../images/' .
+	    urlencode($data['problemlib_type']) . '.png" alt="problem library" ' .
+	    'title="view problem library for judge" /></a> ' .
+	    addSubmit('delete', 'cmd[delete_lib]',
+	              "return confirm('Delete problem library for judge?')") .
+	    "</td></tr>\n";
+}
 if ( !empty($data['special_run']) ) {
 	echo '<tr><td>Special run script:</td><td class="filename">' .
 		htmlspecialchars($data['special_run']) . "</td></tr>\n";
@@ -236,6 +282,10 @@ if ( !empty($data['special_run']) ) {
 if ( !empty($data['special_compare']) ) {
 	echo '<tr><td>Special compare script:</td><td class="filename">' .
 		htmlspecialchars($data['special_compare']) . "</td></tr>\n";
+}
+if ( !empty($data['depends']) ) {
+	echo '<tr><td>Problem dependency:</td><td class="probid">' .
+		htmlspecialchars($data['depends']) . "</td></tr>\n";
 }
 
 if ( IS_ADMIN && class_exists("ZipArchive") ) {

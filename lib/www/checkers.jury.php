@@ -55,44 +55,52 @@ function check_problem($data, $keydata = null)
 		ch_error("Problem ID may only contain characters " . IDENTIFIER_CHARS . ".");
 	}
 
-	if ( !empty($_FILES['data']['name'][0]['problemtext']) ) {
-		$origname = $_FILES['data']['name'][0]['problemtext'];
-		$tempname = $_FILES['data']['tmp_name'][0]['problemtext'];
-		if ( strrpos($origname,'.')!==FALSE ) {
-			$ext = substr($origname,strrpos($origname,'.')+1);
-			if ( in_array($ext, array('txt','html','pdf')) ) {
-				$data['problemtext_type'] = $ext;
-			}
-		}
-		// These functions only exist in PHP >= 5.3.0.
-		if ( !isset($data['problemtext_type']) &&
-		     function_exists("finfo_open") ) {
-			$finfo = finfo_open(FILEINFO_MIME);
+        $uploadtypes = array("problemtext", "problemlib", "problemdata");
+        foreach($uploadtypes as $ut) {
+                $ut_type = $ut . '_type';
+                if ( !empty($_FILES['data']['name'][0][$ut]) ) {
+                        $origname = $_FILES['data']['name'][0][$ut];
+                        $tempname = $_FILES['data']['tmp_name'][0][$ut];
+                        if ( strrpos($origname,'.')!==FALSE ) {
+                                $ext = substr($origname,strrpos($origname,'.')+1);
+                                if ( in_array($ext, array('txt','html','pdf')) ) {
+                                        $data[$ut_type] = $ext;
+                                }
+                        }
+                        // These functions only exist in PHP >= 5.3.0.
+                        if ( !isset($data[$ut_type]) &&
+                             function_exists("finfo_open") ) {
+                                $finfo = finfo_open(FILEINFO_MIME);
 
-			list($type, $enc) = explode('; ', finfo_file($finfo, $tempname));
+                                list($type, $enc) = explode('; ', finfo_file($finfo, $tempname));
 
-			finfo_close($finfo);
+                                finfo_close($finfo);
 
-			switch ( $type ) {
-			case 'application/pdf':
-				$data['problemtext_type'] = 'pdf';
-				break;
-			case 'text/html':
-				$data['problemtext_type'] = 'html';
-				break;
-			case 'text/plain':
-				$data['problemtext_type'] = 'txt';
-				break;
-			}
-		}
-		if ( !isset($data['problemtext_type']) ) {
-			ch_error("Problem statement has unknown file type.");
-		}
-	}
-	if ( !empty($data['problemtext']) &&
-	     !isset($data['problemtext_type']) ) {
-		ch_error("Problem statement has unknown file type.");
-	}
+                                switch ( $type ) {
+                                case 'application/pdf':
+                                        $data[$ut_type] = 'pdf';
+                                        break;
+                                case 'text/html':
+                                        $data[$ut_type] = 'html';
+                                        break;
+                                case 'text/plain':
+                                        $data[$ut_type] = 'txt';
+                                        break;
+                                case 'application/zip':
+                                case 'application/octet-stream':
+                                        $data[$ut_type] = 'zip';
+                                        break;
+                                }
+                        }
+                        if ( !isset($data[$ut_type]) ) {
+                                ch_error("Problem statement has unknown file type.");
+                        }
+                }
+                if ( !empty($data[$ut]) &&
+                     !isset($data[$ut_type]) ) {
+                        ch_error("$ut has unknown file type.");
+                }
+        }
 
 	return $data;
 }

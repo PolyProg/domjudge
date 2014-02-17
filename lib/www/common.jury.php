@@ -168,7 +168,7 @@ function importZippedProblem($zip, $probid = NULL)
 	$prop_file = 'domjudge-problem.ini';
 
 	$ini_keys = array('probid', 'cid', 'name', 'allow_submit', 'allow_judge',
-	                  'timelimit', 'special_run', 'special_compare', 'color');
+	                  'timelimit', 'special_run', 'special_compare', 'color', 'depends');
 
 	$def_timelimit = 10;
 
@@ -204,10 +204,28 @@ function importZippedProblem($zip, $probid = NULL)
 	}
 
 	// Add problem statement
-	foreach (array('pdf', 'html', 'txt') as $type) {
+	foreach (array('pdf', 'html', 'txt', 'zip') as $type) {
 		$text = $zip->getFromName('problem.' . $type);
 		if ($text !== FALSE) {
 			$DB->q('UPDATE problem SET problemtext = %s, problemtext_type = %s WHERE probid = %s',
+				$text, $type, $probid);
+			break;
+		}
+	}
+	// Add problem data
+	foreach (array('pdf', 'html', 'txt', 'zip') as $type) {
+		$text = $zip->getFromName('data.' . $type);
+		if ($text !== FALSE) {
+			$DB->q('UPDATE problem SET problemdata = %s, problemdata_type = %s WHERE probid = %s',
+				$text, $type, $probid);
+			break;
+		}
+	}
+	// Add problem library for judge
+	foreach (array('pdf', 'html', 'txt', 'zip') as $type) {
+		$text = $zip->getFromName('library.' . $type);
+		if ($text !== FALSE) {
+			$DB->q('UPDATE problem SET problemlib = %s, problemlib_type = %s WHERE probid = %s',
 				$text, $type, $probid);
 			break;
 		}

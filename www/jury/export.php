@@ -14,9 +14,9 @@ if ( !isset($id) ) {
 }
 
 $ini_keys = array('probid', 'name', 'timelimit', 'special_run',
-		  'special_compare', 'color');
+		  'special_compare', 'color', 'depends');
 
-$problem = $DB->q('MAYBETUPLE SELECT problemtext, problemtext_type, ' .
+$problem = $DB->q('MAYBETUPLE SELECT problemtext, problemtext_type, problemdata, problemdata_type, problemlib, problemlib_type, ' .
                  join(',', $ini_keys) . ' FROM problem p WHERE probid = %s',$id);
 if ( empty($problem) ) error ("Problem $id not found");
 
@@ -41,6 +41,14 @@ $zip->addFromString('domjudge-problem.ini', $inistring);
 if ( !empty($problem['problemtext']) ) {
 	$zip->addFromString('problem.'.$problem['problemtext_type'], $problem['problemtext']);
 	unset($problem['problemtext']);
+}
+if ( !empty($problem['problemdata']) ) {
+	$zip->addFromString('data.'.$problem['problemdata_type'], $problem['problemdata']);
+	unset($problem['problemdata']);
+}
+if ( !empty($problem['problemlib']) ) {
+	$zip->addFromString('library.'.$problem['problemlib_type'], $problem['problemlib']);
+	unset($problem['problemlib']);
 }
 
 $testcases = $DB->q('SELECT description, testcaseid, rank FROM testcase

@@ -462,12 +462,13 @@ function checkFileUpload($errorcode) {
  * It is assumed that the headers have not been sent yet, and this
  * function terminates the PHP script execution.
  */
-function putProblemText($probid)
+function putProblemText($probid, $ut)
 {
+        $ut_type = $ut . "_type";
 	global $DB, $cdata;
 
-	$prob = $DB->q("MAYBETUPLE SELECT cid, problemtext, problemtext_type
-	                FROM problem WHERE OCTET_LENGTH(problemtext) > 0
+	$prob = $DB->q("MAYBETUPLE SELECT cid, $ut, $ut_type
+	                FROM problem WHERE OCTET_LENGTH($ut) > 0
 	                AND probid = %s", $probid);
 
 	if ( empty($prob) ||
@@ -476,7 +477,7 @@ function putProblemText($probid)
 		error("Problem '$probid' not found or not available");
 	}
 
-	switch ( $prob['problemtext_type'] ) {
+	switch ( $prob[$ut_type] ) {
 	case 'pdf':
 		$mimetype = 'application/pdf';
 		break;
@@ -486,18 +487,21 @@ function putProblemText($probid)
 	case 'txt':
 		$mimetype = 'text/plain';
 		break;
+	case 'zip':
+		$mimetype = 'application/zip';
+		break;
 	default:
 		error("Problem '$probid' text has unknown type");
 	}
 
-
-	$filename = "prob-$probid.$prob[problemtext_type]";
+        $fileext  = $prob[$ut_type];
+	$filename = "$ut-$probid.$fileext";
 
 	header("Content-Type: $mimetype; name=\"$filename\"");
 	header("Content-Disposition: inline; filename=\"$filename\"");
-	header("Content-Length: " . strlen($prob['problemtext']));
+	header("Content-Length: " . strlen($prob[$ut]));
 
-	echo $prob['problemtext'];
+	echo $prob[$ut];
 
 	exit(0);
 }
