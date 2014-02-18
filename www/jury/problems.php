@@ -33,10 +33,10 @@ if( $res->count() == 0 ) {
 	     "<th scope=\"col\">time<br />limit</th>" .
 	     "<th class=\"sorttable_nosort\" scope=\"col\">colour</th>" .
 	     "<th scope=\"col\">test<br />cases</th>" .
-	     "<th scope=\"col\">Depends</th>" .
-	     "<th scope=\"col\">Text</th>" .
-	     "<th scope=\"col\">Data</th>" .
-	     "<th scope=\"col\">Lib</th>" .
+	     "<th scope=\"col\">depends</th>" .
+	     "<th scope=\"col\">text</th>" .
+	     "<th scope=\"col\">data</th>" .
+	     "<th scope=\"col\">lib</th>" .
 	    ( IS_ADMIN ? "<th scope=\"col\"></th>" : '' ) .
 	     "</tr></thead>\n<tbody>\n";
 

@@ -467,6 +467,10 @@ function submit_solution($team, $prob, $lang, $files, $filenames, $origsubmitid 
 							AND cid = %i AND allow_submit = "1"', $prob, $cid) ) {
 		error("Problem '$prob' not found in database or not submittable [c$cid].");
 	}
+        if ( $team != "domjudge" && ! satisfies_dependency($team, $prob, $depends) ) {
+		error("You are not allowed to submit to problem '$prob' at this time:" .
+                        " you need to solve problem '$depends' first.");
+        }
 
 	// Reindex arrays numerically to allow simultaneously iterating
 	// over both $files and $filenames.
@@ -662,4 +666,85 @@ function auditlog($datatype, $dataid, $action, $extrainfo = null, $username = nu
 	        (logtime, cid, user, datatype, dataid, action, extrainfo)
 	        VALUES(%s, %i, %s, %s, %s, %s, %s)',
 	       now(), $cid, $user, $datatype, $dataid, $action, $extrainfo);
+}
+
+/**
+ *  This function returns the list of all problems in this contest
+ */
+function list_problems_in_contests() {
+    global $DB, $cid;
+
+    $probs = $DB->q('SELECT DISTINCT p.probid, p.depends, p.name, p.color, p.cid, p.problemtext_type, p.problemdata_type
+                     FROM problem p
+                     WHERE p.allow_submit = 1
+                     AND p.cid = %i
+                     ORDER by probid',
+                     $cid);
+    return $probs;
+}
+
+/**
+ *  This function returns the list of problems which the team solved
+ */
+function list_problems_solved($team) {
+    if( empty($team) ) error("No value for Team.");
+    global $DB, $cid;
+
+    $probs = $DB->q('COLUMN SELECT DISTINCT s.probid
+                     FROM submission s
+                     LEFT JOIN judging j ON (s.submitid = j.submitid)
+                     WHERE s.cid = %i
+                     AND   s.teamid = %s
+                     AND   s.valid = 1
+                     AND   j.valid = 1
+                     AND   j.result = \'correct\'
+                     ',
+                     $cid, $team);
+    return array_flip($probs);
+}
+
+/**
+ *  This function returns true if the team is allowed to submit to problem $prob:
+ *  ie. it has already solved the problem $prob depends on, or if $prob depends on no problems.
+ */
+function satisfies_dependency($team, $prob, &$depends) {
+    if( empty($team) ) error("No value for Team.");
+    if( empty($prob) ) error("No value for Problem.");
+
+    global $DB, $cid;
+    if(! $depends = $DB->q('MAYBEVALUE SELECT depends
+                            FROM problem
+                            WHERE probid = %s',
+                             $prob) ) {
+        // Problem doesn't depend on any other
+        return true;
+    }
+    $numcorrect = $DB->q('VALUE
+                          SELECT    count(*)
+                          FROM      submission s
+                          LEFT JOIN judging j ON (s.submitid = j.submitid AND s.valid=1 AND j.valid=1)
+                          WHERE     s.cid = %i
+                          AND       s.teamid = %s
+                          AND       s.probid = %s
+                          AND       j.result = \'correct\'',
+                          $cid, $team, $depends);
+    return ($numcorrect > 0);
+}
+
+/**
+ *  This function returns true if the team is allowed to submit to problem $prob:
+ *  ie. it has already solved the problem $prob depends on, or if $prob depends on no problems.
+ */
+function is_independant_problem($prob) {
+    if( empty($prob) ) error("No value for Problem.");
+
+    global $DB;
+    if(! $depends = $DB->q('MAYBEVALUE SELECT depends
+                            FROM problem
+                            WHERE probid = %s',
+                             $prob) ) {
+        // Problem doesn't depend on any other
+        return true;
+    }
+    return false;
 }

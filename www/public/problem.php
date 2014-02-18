@@ -11,5 +11,8 @@ require('init.php');
 $id = @$_REQUEST['id'];
 if ( ! preg_match('/^' . IDENTIFIER_CHARS . '*$/', $id) ) error("Invalid problem id");
 
-putProblemText($id, "problemtext");
-
+if (is_independant_problem($id)) {
+        putProblemText($id, "problemtext");
+} else {
+        error("Cannot show problem $id in public view: this problem depends on another problem.");
+}

@@ -37,6 +37,10 @@ a:active          { color: red;    }
 	-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
 	filter: alpha(opacity=20);
 }
+.solved           { color: #709070; text-decoration: line-through; }
+.solved td a      { color: #709070; text-decoration: line-through; }
+.disabled         { color: silver; }
+.disabled a       { color: gray;   }
 .nodata           { color: gray; font-style: italic; }
 
 /* general table layout (not in scoreboard or lists) */
