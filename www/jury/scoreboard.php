@@ -50,7 +50,15 @@ foreach(array_keys($time_by_team) as $key) {
 }
 $gl[] = join($loc, '|');
 $glres = join($gl, '@');
-echo "<p style='color:silver'>Ranks/Score/Penalty/Time per team (for website)</p>";
-echo "<p style='color:silver'>$glres</p>";
+echo "<hr />";
+echo "<h2>Export to HC2 website.</h2>";
+echo "<p>This does a cross-site request. You must be logged into the HC2 admin website for this to work.</p>";
+?>
+<form method="post" action="http://hc2.ch/admin/ranks.php" target="_blank" >
+<input value="<?php echo $glres;?>" name="data">
+<input type="hidden" value="yes" name="confirm">
+<input type="submit" value="Submit">
+</form>
+<?php
 
 require(LIBWWWDIR . '/footer.php');
