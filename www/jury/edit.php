@@ -13,7 +13,7 @@ require('init.php');
 requireAdmin();
 
 $cmd = @$_POST['cmd'];
-if ( $cmd != 'add' && $cmd != 'edit' ) error ("Unknown action.");
+if ( $cmd != 'add' && $cmd != 'edit' && $cmd != "replace") error ("Unknown action.");
 
 require(LIBDIR .  '/relations.php');
 
@@ -60,13 +60,12 @@ if ( ! isset($_POST['cancel']) ) {
 
 		if ( $cmd == 'add' ) {
 			$newid = $DB->q("RETURNID INSERT INTO $t SET %S", $itemdata);
-			auditlog($t, $newid, 'added');
-
 			foreach($KEYS[$t] as $tablekey) {
 				if ( isset($itemdata[$tablekey]) ) {
 					$newid = $itemdata[$tablekey];
 				}
 			}
+			auditlog($t, $newid, 'added');
 		} elseif ( $cmd == 'edit' ) {
 			foreach($KEYS[$t] as $tablekey) {
 					$prikey[$tablekey] = $keydata[$i][$tablekey];
@@ -75,6 +74,14 @@ if ( ! isset($_POST['cancel']) ) {
 
 			$DB->q("UPDATE $t SET %S WHERE %S", $itemdata, $prikey);
 			auditlog($t, implode(', ', $prikey), 'updated');
+		} elseif ( $cmd == 'replace' ) {
+			$DB->q("REPLACE INTO $t SET %S", $itemdata);
+			foreach($KEYS[$t] as $tablekey) {
+				if ( isset($itemdata[$tablekey]) ) {
+					$newid = $itemdata[$tablekey];
+				}
+			}
+			auditlog($t, $newid, 'replaced');
 		}
 	}
 

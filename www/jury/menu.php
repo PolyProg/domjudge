@@ -11,10 +11,12 @@
 <a href="clarifications.php" accesskey="c" id="menu_clarifications">clarifications</a>
 <?php	} ?>
 <a href="submissions.php" accesskey="s">submissions</a>
+<a href="balloons.php" accesskey="p">balloons</a>
+<a href="scoreboard.php" accesskey="b">scoreboard</a>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 <?php   if ( have_printing() ) { ?>
 <a href="print.php" accesskey="p">print</a>
 <?php   } ?>
-<a href="scoreboard.php" accesskey="b">scoreboard</a>
 </div>
 
 <div id="menutopright">
