@@ -312,9 +312,6 @@ function judge($mark, $row, $judgingid)
 	dbconfig_init();
 	putenv('USE_CHROOT='    . (USE_CHROOT ? '1' : ''));
 	putenv('COMPILETIME='   . dbconfig_get('compile_time'));
-	putenv('MEMLIMIT_ALL='  . dbconfig_get('memory_limit'));
-	putenv('MEMLIMIT_C='    . dbconfig_get('memory_limit_c'));
-	putenv('MEMLIMIT_JAVA=' . dbconfig_get('memory_limit_java'));
 	putenv('FILELIMIT='     . dbconfig_get('filesize_limit'));
 	putenv('PROCLIMIT='     . dbconfig_get('process_limit'));
 
@@ -322,9 +319,11 @@ function judge($mark, $row, $judgingid)
         if ($row['langid'] == "java" || $row['langid'] == "scala") {
           // The JVM enforces the memory limit for java and scala
           putenv('MEMLIMIT='      . dbconfig_get('memory_limit'));
+          putenv('MEMLIMIT_CONTESTANT=' . dbconfig_get('memory_limit_java'));
           $prefix = ucfirst($prefix);
         } else {
           putenv('MEMLIMIT='      . dbconfig_get('memory_limit_c'));
+          putenv('MEMLIMIT_CONTESTANT=' . dbconfig_get('memory_limit_c'));
         }
 
 	$cpuset_opt = "";

@@ -15,7 +15,24 @@ scalac "$@"
 EXITCODE=$?
 [ "$EXITCODE" -ne 0 ] && exit $EXITCODE
 
-MAINCLASS=$(basename $MAINSOURCE .scala)
+# Look for class that has the 'main' function:
+for cn in $(find * -type f -regex '^.*\.class$' \
+		| sed -e 's/\.class$//' -e 's/\//./'); do
+	javap "$cn" \
+	| egrep -q 'public static (|final )void main\(java.lang.String(\[\]|\.\.\.)\)' \
+	&& {
+		if [ -n "$MAINCLASS" ]; then
+			echo "Warning: found another 'main' in '$cn'"
+		else
+			echo "Info: using 'main' from '$cn'"
+			MAINCLASS=$cn
+		fi
+	}
+done
+if [ -z "$MAINCLASS" ]; then
+	echo "Error: no 'main' found in any class file."
+	exit 1
+fi
 
 cat > $DEST <<EOF
 #!/bin/sh
@@ -26,7 +43,7 @@ if [ "\${0%/*}" != "\$0" ]; then
     cd "\${0%/*}"
 fi
 
-exec scala $MAINCLASS
+exec scala -J-Xrs -J-Xss8m -J-DONLINE_JUDGE=1 -J-DDOMJUDGE=1 -J-Xmx${MEMLIMIT}k $MAINCLASS
 EOF
 
 chmod a+x $DEST

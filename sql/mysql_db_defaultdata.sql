@@ -11,7 +11,7 @@
 -- 
 
 INSERT INTO `configuration` (`name`, `value`, `type`, `description`) VALUES ('compile_time', '30', 'int', 'Maximum seconds available for compiling.');
-INSERT INTO `configuration` (`name`, `value`, `type`, `description`) VALUES ('memory_limit', '720896', 'int', 'Maximum memory usage (in kB) by submissions. This includes the shell which starts the compiled solution and also any interpreter like the Java VM, which takes away approx. 300MB!');
+INSERT INTO `configuration` (`name`, `value`, `type`, `description`) VALUES ('memory_limit', '2000000', 'int', 'Maximum memory usage (in kB) by submissions. This includes the shell which starts the compiled solution and also any interpreter like the Java VM, which takes away approx. 300MB (32 bit) or 1.5 GB (64 bit)!');
 INSERT INTO `configuration` (`name`, `value`, `type`, `description`) VALUES ('memory_limit_c', '262144', 'int', 'Maximum memory usage (in kB) by submissions for C and C++.');
 INSERT INTO `configuration` (`name`, `value`, `type`, `description`) VALUES ('memory_limit_java', '393216', 'int', 'Maximum memory usage (in kB) by submissions for Java and Scala.');
 INSERT INTO `configuration` (`name`, `value`, `type`, `description`) VALUES ('filesize_limit', '4096', 'int', 'Maximum filesize (in kB) submissions may write. Solutions will abort when trying to write more, so this should be greater than the maximum testdata output.');

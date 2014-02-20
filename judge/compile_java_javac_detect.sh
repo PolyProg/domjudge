@@ -17,11 +17,6 @@ MEMLIMIT="$1" ; shift
 MAINSOURCE="$1"
 MAINCLASS=""
 
-# Amount of memory reserved for the Java virtual machine in kB. The
-# default below is just above the maximum memory usage of current
-# versions of the jvm, but might need increasing in some cases.
-MEMRESERVED=300000
-
 TMPFILE=`mktemp --tmpdir domjudge_javac_output.XXXXXX` || exit 1
 
 # Byte-compile:
@@ -64,9 +59,6 @@ if [ -z "$MAINCLASS" ]; then
 	exit 1
 fi
 
-# Calculate Java program memlimit as MEMLIMIT - max. JVM memory usage:
-MEMLIMITJAVA=$(($MEMLIMIT - $MEMRESERVED))
-
 # Write executing script:
 # Executes java byte-code interpreter with following options
 # -Xmx: maximum size of memory allocation pool
@@ -81,7 +73,7 @@ if [ "\${0%/*}" != "\$0" ]; then
 	cd "\${0%/*}"
 fi
 
-exec java -Xrs -Xss8m -DONLINE_JUDGE=1 -DDOMJUDGE=1 -Xmx${MEMLIMITJAVA}k $MAINCLASS
+exec java -Xrs -Xss8m -DONLINE_JUDGE=1 -DDOMJUDGE=1 -Xmx${MEMLIMIT}k $MAINCLASS
 EOF
 
 chmod a+x $DEST

@@ -129,7 +129,7 @@ logmsg $LOG_INFO "starting compile"
 exitcode=0
 $GAINROOT $RUNGUARD ${DEBUG:+-v} $CPUSET_OPT -u "$RUNUSER" \
 	-t $COMPILETIME -c -f 65536 -T "$WORKDIR/compile.time" -- \
-	"$COMPILE_SCRIPT" program "$MEMLIMIT" "$@" >"$WORKDIR/compile.tmp" 2>&1 || \
+	"$COMPILE_SCRIPT" program "$MEMLIMIT_CONTESTANT" "$@" >"$WORKDIR/compile.tmp" 2>&1 || \
 	exitcode=$?
 
 cd "$WORKDIR"
