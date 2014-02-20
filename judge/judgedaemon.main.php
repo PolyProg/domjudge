@@ -282,7 +282,7 @@ while ( TRUE ) {
 	// get maximum runtime and other parameters
 	$row = $DB->q('TUPLE SELECT CEILING(time_factor*timelimit) AS maxruntime,
 	               s.submitid, s.langid, s.teamid, s.probid,
-	               p.special_run, p.special_compare
+	               p.special_run, p.special_compare, p.library_prefix
 	               FROM submission s, problem p, language l
 	               WHERE s.probid = p.probid AND s.langid = l.langid AND
 	               judgemark = %s AND judgehost = %s', $mark, $myhost);
@@ -312,9 +312,20 @@ function judge($mark, $row, $judgingid)
 	dbconfig_init();
 	putenv('USE_CHROOT='    . (USE_CHROOT ? '1' : ''));
 	putenv('COMPILETIME='   . dbconfig_get('compile_time'));
-	putenv('MEMLIMIT='      . dbconfig_get('memory_limit'));
+	putenv('MEMLIMIT_ALL='  . dbconfig_get('memory_limit'));
+	putenv('MEMLIMIT_C='    . dbconfig_get('memory_limit_c'));
+	putenv('MEMLIMIT_JAVA=' . dbconfig_get('memory_limit_java'));
 	putenv('FILELIMIT='     . dbconfig_get('filesize_limit'));
 	putenv('PROCLIMIT='     . dbconfig_get('process_limit'));
+
+        $prefix = $row['library_prefix'];
+        if ($row['langid'] == "java" || $row['langid'] == "scala") {
+          // The JVM enforces the memory limit for java and scala
+          putenv('MEMLIMIT='      . dbconfig_get('memory_limit'));
+          $prefix = ucfirst($prefix);
+        } else {
+          putenv('MEMLIMIT='      . dbconfig_get('memory_limit_c'));
+        }
 
 	$cpuset_opt = "";
 	if ( isset($options['daemonid']) ) $cpuset_opt = "-n ${options['daemonid']}";
@@ -355,6 +366,32 @@ function judge($mark, $row, $judgingid)
 			error("Could not create $srcfile");
 		}
 	}
+        // Add library to source files
+        if ($prefix != "" && $row['langid'] != "txt") {
+        	$files[] = $prefix . "." . $row['langid'];
+                $libfile = "$workdir/compile/library.zip";
+
+                // Download library
+                $content = $DB->q("VALUE SELECT SQL_NO_CACHE problemlib FROM problem
+                                   WHERE probid = %s", $row['probid']);
+                if ( file_put_contents($libfile, $content) === FALSE ) {
+                        error("Could not create $libfile");
+                }
+                unset($content);
+
+                // Add it to source files
+                $zip = openZipFile($libfile);
+                for ($j = 0; $j < $zip->numFiles; $j++) {
+                        $filename = $zip->getNameIndex($j);
+                        $srcfile = "$workdir/compile/$filename";
+                        $content = $zip->getFromIndex($j);
+			if ( file_put_contents($srcfile, $content) === FALSE ) {
+				error("Could not create $scrfile");
+			}
+                        unset($content);
+                }
+                $zip->close();
+        }
 
 	// Compile the program.
 	system(LIBJUDGEDIR . "/compile.sh $cpuset_opt $row[langid] '$workdir' " .
@@ -588,4 +625,21 @@ function store_result($result, $row, $judgingid)
 	}
 
 	$DB->q('COMMIT');
+}
+
+/**
+ * tries to open corresponding zip archive
+ */
+function openZipFile($filename) {
+	$zip = new ZipArchive;
+	$res = $zip->open($filename, ZIPARCHIVE::CHECKCONS);
+	if ($res === ZIPARCHIVE::ER_NOZIP || $res === ZIPARCHIVE::ER_INCONS) {
+		error("no valid zip archive given");
+	} else if ($res === ZIPARCHIVE::ER_MEMORY) {
+		error("not enough memory to extract zip archive");
+	} else if ($res !== TRUE) {
+		error("unknown error while extracting zip archive");
+	}
+
+	return $zip;
 }

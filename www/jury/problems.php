@@ -15,7 +15,7 @@ echo "<h1>Problems</h1>\n\n";
 
 // Select all data, sort problems from the current contest on top.
 $res = $DB->q('SELECT p.probid,p.name,p.allow_submit,p.allow_judge,p.timelimit,p.color,
-               p.problemtext_type,p.problemdata_type,p.problemlib_type,p.depends,
+               p.problemtext_type,p.problemdata_type,p.problemlib_type,p.depends,p.library_prefix,
                c.*, COUNT(testcaseid) AS testcases
                FROM problem p
                NATURAL JOIN contest c
@@ -94,9 +94,9 @@ if( $res->count() == 0 ) {
 			echo '<td title="view problem library for judge">' .
 			     '<a href="problem.php?id=' . urlencode($row['probid']) .
 			     '&amp;cmd=viewlib"><img src="../images/' . urlencode($row['problemlib_type']) .
-			     '.png" alt="problem text" /></a></td>';
+			     '.png" alt="problem text" />'.$row['library_prefix'].'</a></td>';
 		} else {
-			echo '<td></td>';
+			echo '<td>'.$row['library_prefix'].'</td>';
 		}
 		if ( IS_ADMIN ) {
 			echo '<td title="export problem as zip-file">' .

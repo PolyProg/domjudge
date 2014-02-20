@@ -168,7 +168,7 @@ function importZippedProblem($zip, $probid = NULL)
 	$prop_file = 'domjudge-problem.ini';
 
 	$ini_keys = array('probid', 'cid', 'name', 'allow_submit', 'allow_judge',
-	                  'timelimit', 'special_run', 'special_compare', 'color', 'depends');
+	                  'timelimit', 'special_run', 'special_compare', 'color', 'depends', 'library_prefix');
 
 	$def_timelimit = 10;
 

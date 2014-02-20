@@ -99,6 +99,7 @@ if ( !empty($cmd) ):
 		echo "<tr><td>Problem ID:</td><td class=\"probid\">";
 		$row = $DB->q('TUPLE SELECT p.probid,p.cid,p.name,p.allow_submit,p.allow_judge,
 	                                    p.timelimit,p.special_run,p.special_compare,p.depends,p.color,
+                                            p.library_prefix,
 	                                    COUNT(testcaseid) AS testcases
 		               FROM problem p
 		               LEFT JOIN testcase USING (probid)
@@ -156,6 +157,9 @@ src="../images/b_help.png" class="smallpicto" alt="?" /></a></td></tr>
 
 <tr><td><label for="data_0__problemlib_">Problem library for judge:</label></td>
 <td><?php echo addFileField('data[0][problemlib]', 30, ' accept="application/zip,application/octet-stream"')?></td></tr>
+
+<tr><td><label for="data_0__library_prefix_">Library prefix:</label></td>
+<td><?php echo addInput('data[0][library_prefix]', @$row['library_prefix'], 30, 25)?></td></tr>
 
 <tr><td><label for="data_0__special_run_">Special run script:</label></td>
 <td><?php echo addInput('data[0][special_run]', @$row['special_run'], 30, 25)?></td></tr>
