@@ -43,7 +43,7 @@ if [ "\${0%/*}" != "\$0" ]; then
     cd "\${0%/*}"
 fi
 
-exec scala -J-Xrs -J-Xss8m -J-DONLINE_JUDGE=1 -J-DDOMJUDGE=1 -J-Xmx${MEMLIMIT}k $MAINCLASS
+exec scala -J-Xrs -J-Xss8m -J-DONLINE_JUDGE=1 -J-DDOMJUDGE=1 -J-Xmx${MEMLIMIT}k $MAINCLASS "$@"
 EOF
 
 chmod a+x $DEST
