@@ -28,6 +28,18 @@ $title = 'Printout '.@$id;
 
 if ( ! $id ) error("Missing or invalid printout id");
 
+if ( isset($_POST['reprint']) ) {
+        $DB->q('UPDATE printout SET printed=0, delivered=0
+                WHERE submitid = %i',
+                $id);
+}
+if ( isset($_POST['done']) ) {
+        $DB->q('UPDATE printout SET delivered=1
+                WHERE submitid = %i',
+                $id);
+}
+
+
 $submdata = $DB->q('MAYBETUPLE SELECT s.teamid, s.sourcecode,
                     s.submittime, s.printed, s.delivered, c.cid, c.contestname,
                     t.name AS teamname
@@ -48,6 +60,7 @@ if ( !$submdata['delivered'] ) {
 	echo " (delivered)</h1>\n\n";
 }
 
+echo addForm($pagename . '?id=' . urlencode($id));
 ?>
 <table>
 <caption>Printout</caption>
@@ -59,11 +72,20 @@ if ( !$submdata['delivered'] ) {
 	<span class="teamid"><?php echo htmlspecialchars($submdata['teamid'])?></span>:
 	<?php echo htmlspecialchars($submdata['teamname'])?></a></td></tr>
 <tr><td scope="row">Submitted:</td><td><?php echo  htmlspecialchars($submdata['submittime']) ?></td></tr>
-<tr><td scope="row">Printed:</td><td><?php echo  ($submdata['printed']?'yes':'no') ?></td></tr>
-<tr><td scope="row">Delivered:</td><td><?php echo  ($submdata['delivered']?'yes':'no') ?></td></tr>
-</table>
-<hr />
 <?php
+                echo "<tr><td scope='row'>Printed:</td><td>".($submdata['printed']?'yes':'no')." ";
+		echo addSubmit('reprint', 'reprint');
+                echo "</td></tr>";
+?>
+<?php
+                echo "<tr><td scope='row'>Delivered:</td><td>".($submdata['delivered']?'yes':'no')." ";
+		echo addSubmit('done', 'done');
+                echo "</td></tr>";
+?>
+</table>
+<?php
+addEndForm();
+echo "<hr />";
 require(LIBWWWDIR . '/highlight.php');
 echo highlight_native($submdata['sourcecode'], 'txt');
 echo '<hr />';

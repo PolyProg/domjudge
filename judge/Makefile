@@ -7,11 +7,15 @@ TARGETS = check_float check_boolfind runjury_boolfind compare runguard runpipe
 
 judgehost: build
 
-config: judgedaemon
+config: judgedaemon printdaemon
 
 build: $(TARGETS)
 
 judgedaemon: judgedaemon.in $(TOPDIR)/paths.mk
+	$(substconfigvars)
+	chmod a+x $@
+
+printdaemon: printdaemon.in $(TOPDIR)/paths.mk
 	$(substconfigvars)
 	chmod a+x $@
 
@@ -40,8 +44,8 @@ install-judgehost:
 		compare compare_wrapper compare_float compare_boolfind \
 		check_diff.sh check_float check_boolfind sh-static
 	$(INSTALL_DATA) -t $(DESTDIR)$(judgehost_libjudgedir) parse_result.xslt \
-		judgedaemon.main.php
-	$(INSTALL_PROG) -t $(DESTDIR)$(judgehost_bindir) judgedaemon
+		judgedaemon.main.php printdaemon.main.php
+	$(INSTALL_PROG) -t $(DESTDIR)$(judgehost_bindir) judgedaemon printdaemon
 	$(INSTALL_PROG) -t $(DESTDIR)$(judgehost_bindir) runguard runpipe
 
 clean-l:
@@ -49,3 +53,4 @@ clean-l:
 
 distclean-l:
 	-rm -f judgedaemon
+	-rm -f printdaemon
