@@ -56,22 +56,13 @@ function put_print_form()
 	<td><input type="file" name="code" id="code" size="40" required onChange='detectLanguage(document.getElementById("code").value);' /></td>
 	</tr>
 	<tr><td colspan="2">&nbsp;</td></tr>
-	<tr><td><label for="langid">Language</label>:</td>
-	    <td><?php
-
-	$langs = $DB->q('KEYVALUETABLE SELECT langid, name FROM language
-			 WHERE allow_submit = 1 ORDER BY name');
-	$langs[''] = 'plain text';
-	echo addSelect('langid', $langs, '', true);
-
-	?></td>
-	</tr>
 	<tr><td colspan="2">&nbsp;</td></tr>
 	<tr><td></td>
 	    <td><?php echo addSubmit('Print code', 'submit'); ?></td>
 	</tr>
 	</table>
 
+        <input type="hidden" name="langid" value="txt" />
 	<?php
 
 	echo addEndForm();
@@ -98,14 +89,22 @@ function handle_print_upload()
 		if ( ! isset($lang) ) error("Unable to find language '$langid'");
 	}
 
-	if ( IS_JURY ) $whoami = 'JURY/' . getJuryMember();
+	if ( IS_JURY ) $whoami = 'domjudge';
 	else $whoami = $login;
 
+ /*
 	$ret = send_print($realfilename,$langid,$whoami,$filename);
 
 	echo "<p>" . nl2br(htmlspecialchars($ret[1])) . "</p>\n\n";
 
 	if ( $ret[0] ) {
+		echo "<p>Print successful.</p>";
+	} else {
+		error("Error while printing. Contact staff.");
+	}
+  */
+        $id = print_solution($whoami, $realfilename);
+	if ( $id > 0 ) {
 		echo "<p>Print successful.</p>";
 	} else {
 		error("Error while printing. Contact staff.");
@@ -158,4 +157,69 @@ function send_print($filename, $language = null, $team = null, $origname = null)
 	exec($cmd, $output, $retval);
 
 	return array($retval == 0, implode("\n", $output));
+}
+
+
+/**
+ * This function takes a temporary file of a file to be printed,
+ * validates it and puts it into the database. Additionally it
+ * moves it to a backup storage.
+ */
+function print_solution($team, $file)
+{
+	if( empty($team) ) error("No value for Team.");
+	if( empty($file) ) error("No value for Filename.");
+
+	global $cdata,$cid, $DB;
+
+	// If no contest has started yet, refuse submissions.
+	$now = now();
+
+	if( difftime($cdata['starttime'], $now) > 0 ) {
+		error("The contest is closed, no printouts accepted. [c$cid]");
+	}
+
+	// Check 2: valid parameters?
+	if( ! $login = $DB->q('MAYBEVALUE SELECT login FROM team WHERE login = %s',$team) ) {
+		error("Team '$team' not found in database.");
+	}
+	$team = $login;
+	if( ! is_readable($file) ) {
+		error("File '$file' not found (or not readable).");
+	}
+	if( filesize($file) > dbconfig_get('sourcesize_limit')*1024 ) {
+		error("Printout file is larger than ".dbconfig_get('sourcesize_limit')." kB.");
+	}
+
+	logmsg (LOG_INFO, "input verified (printing)");
+
+	// Insert submission into the database
+	$id = $DB->q('RETURNID INSERT INTO printout
+				  (cid, teamid, submittime, sourcecode)
+				  VALUES (%i, %s, %s, %s)',
+				 $cid, $team, $now,
+				 getFileContents($file, false));
+
+	// Log to event table
+	$DB->q('INSERT INTO event (eventtime, cid, teamid, langid, probid, submitid, description)
+			VALUES(%s, %i, %s, "txt", "PRINT", %i, "printout")',
+		   now(), $cid, $team, $id);
+
+	$tofile = 'print.' . getSourceFilename($cid,$id,$team,'PRINT','txt');
+	$topath = SUBMITDIR . "/$tofile";
+
+	if ( is_writable( SUBMITDIR ) ) {
+		// Copy the submission to SUBMITDIR for safe-keeping
+		if ( ! @copy($file, $topath) ) {
+			warning("Could not copy '" . $file . "' to '" . $topath . "'");
+		}
+	} else {
+		logmsg(LOG_DEBUG, "SUBMITDIR not writable, skipping");
+	}
+
+	if( difftime($cdata['endtime'], $now) <= 0 ) {
+		logmsg(LOG_INFO, "The contest is closed, submission stored but not processed. [c$cid]");
+	}
+
+	return $id;
 }

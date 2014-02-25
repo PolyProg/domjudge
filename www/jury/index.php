@@ -30,6 +30,7 @@ if ( is_readable('../images/DOMjudgelogo.png') ) {
 <li><a href="problems.php">Problems</a></li>
 <li><a href="scoreboard.php">Scoreboard</a></li>
 <li><a href="submissions.php">Submissions</a></li>
+<li><a href="printouts.php">Printouts</a></li>
 <li><a href="teams.php">Teams</a></li>
 <li><a href="team_categories.php">Team Categories</a></li>
 <li><a href="team_affiliations.php">Team Affiliations</a></li>
