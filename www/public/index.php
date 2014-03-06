@@ -30,9 +30,15 @@ require(LIBWWWDIR . '/scoreboard.php');
 $isstatic = @$_SERVER['argv'][1] == 'static' || isset($_REQUEST['static']);
 
 if ( ! $isstatic ) {
-	echo "<div id=\"menutopright\">\n";
-	putClock();
-	echo "</div>\n";
+  echo "<nav><div id=\"menutop\">\n";
+
+  echo "<a target=\"_top\" href=\"../team/\">Team login</a>\n";
+
+  echo "</div>\n\n<div id=\"menutopright\">\n";
+
+  putClock();
+
+  echo "</div></nav>\n\n";
 }
 
 // call the general putScoreBoard function from scoreboard.php
