@@ -12,5 +12,5 @@ MAINSOURCE="$1"
 # -static:	Static link with all libraries
 # -pipe:	Use pipes for communication between stages of compilation
 # -std=c++11:	Use C++11 conventions
-g++ -Wall -O2 -static -pipe -std=gnu++0x -DONLINE_JUDGE -DDOMJUDGE -o $DEST -x c++ "$@"
+g++ -Wall -O2 -static -pipe -std=c++11 -DONLINE_JUDGE -DDOMJUDGE -o $DEST -x c++ "$@"
 exit $?
