@@ -35,4 +35,4 @@ PROGOUT="$1"; shift
 # 'runpipe'. Note that "$@" expands to separate, quoted arguments.
 touch "$PROGOUT"
 chmod a+rw "$PROGOUT"
-exec "$@" "$TESTIN" "$PROGOUT"
+exec ../bin/runpipe "$@" 1 "$TESTIN" "$PROGOUT" = "$@" 2 "$TESTIN" "$PROGOUT"

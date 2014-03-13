@@ -3,7 +3,7 @@ TOPDIR=..
 endif
 include $(TOPDIR)/Makefile.global
 
-TARGETS = check_float check_boolfind runjury_boolfind runjury_spy compare runguard runpipe run_spy
+TARGETS = check_float check_boolfind runjury_boolfind runjury_spy runjury_spytwo compare runguard runpipe run_spy run_spytwo
 
 judgehost: build
 
@@ -40,7 +40,7 @@ runjury_boolfind: runjury_boolfind.c
 install-judgehost:
 	$(INSTALL_PROG) -t $(DESTDIR)$(judgehost_libjudgedir) \
 		compile*.sh testcase_run.sh chroot-startstop.sh \
-		run run_wrapper run_boolfind run_spy runjury_boolfind runjury_spy \
+		run run_wrapper run_boolfind run_spy run_spytwo runjury_boolfind runjury_spytwo runjury_spy \
 		compare compare_wrapper compare_float compare_boolfind \
 		check_diff.sh check_float check_boolfind sh-static
 	$(INSTALL_DATA) -t $(DESTDIR)$(judgehost_libjudgedir) parse_result.xslt \
