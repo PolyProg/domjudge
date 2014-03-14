@@ -21,6 +21,7 @@ TMPFILE=`mktemp --tmpdir domjudge_javac_output.XXXXXX` || exit 1
 
 # Byte-compile:
 javac -d . "$@" 2> "$TMPFILE"
+echo javac -d . "$@"
 EXITCODE=$?
 if [ "$EXITCODE" -ne 0 ]; then
 	# Let's see if should have named the .java differently
@@ -46,6 +47,7 @@ LASTCLASS=""
 for cn in $(find * -type f -regex '^.*\.class$' \
 		| sed -e 's/\.class$//' -e 's/\//./'); do
         LASTCLASS=$cn
+        echo "Looking for main in '$cn'"
 	javap -public "$cn" \
 	| egrep -q 'public static (|final )void main\(java.lang.String' \
 	&& {
