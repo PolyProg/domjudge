@@ -34,8 +34,8 @@ if [ "$EXITCODE" -ne 0 ]; then
 	rm -f $TMPFILE
 	echo "Info: renaming main source '$MAINSOURCE' to '$PUBLICCLASS.java'"
 	mv "$MAINSOURCE" "$PUBLICCLASS.java"
-	echo javac -d . "*.java"
-	javac -d . "*.java"
+	echo javac -d . *.java
+	javac -d . *.java
 	EXITCODE=$?
 	[ "$EXITCODE" -ne 0 ] && exit $EXITCODE
 fi
