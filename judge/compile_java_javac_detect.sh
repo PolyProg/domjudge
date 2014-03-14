@@ -40,14 +40,18 @@ fi
 
 rm -f $TMPFILE
 
+LASTCLASS=""
+
 # Look for class that has the 'main' function:
 for cn in $(find * -type f -regex '^.*\.class$' \
 		| sed -e 's/\.class$//' -e 's/\//./'); do
+        LASTCLASS=$cn
 	javap -public "$cn" \
 	| egrep -q 'public static (|final )void main\(java.lang.String(\[\]|\.\.\.)\)' \
 	&& {
 		if [ -n "$MAINCLASS" ]; then
 			echo "Warning: found another 'main' in '$cn'"
+			MAINCLASS=$cn
 		else
 			echo "Info: using 'main' from '$cn'"
 			MAINCLASS=$cn
@@ -55,8 +59,8 @@ for cn in $(find * -type f -regex '^.*\.class$' \
 	}
 done
 if [ -z "$MAINCLASS" ]; then
-	echo "Error: no 'main' found in any class file."
-	exit 1
+	echo "Error: no 'main' found in any class file, using '$LASTCLASS'."
+        MAINCLASS=$LASTCLASS
 fi
 
 # Write executing script:
