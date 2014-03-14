@@ -47,7 +47,7 @@ for cn in $(find * -type f -regex '^.*\.class$' \
 		| sed -e 's/\.class$//' -e 's/\//./'); do
         LASTCLASS=$cn
 	javap -public "$cn" \
-	| egrep -q 'public static (|final )void main\(java.lang.String(\[\]|\.\.\.)\)' \
+	| egrep -q 'public static (|final )void main\(java.lang.String' \
 	&& {
 		if [ -n "$MAINCLASS" ]; then
 			echo "Warning: found another 'main' in '$cn'"
