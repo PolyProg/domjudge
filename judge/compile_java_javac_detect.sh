@@ -42,6 +42,7 @@ fi
 rm -f $TMPFILE
 
 LASTCLASS=""
+echo "Classes:" *.class
 
 # Look for class that has the 'main' function:
 for cn in $(find * -type f -regex '^.*\.class$' \
