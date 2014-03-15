@@ -65,7 +65,7 @@ $res = $DB->q('SELECT s.*, t.login, t.name AS teamname, t.room, c.name AS catnam
                LEFT JOIN team t ON (t.login = s.teamid)
                LEFT JOIN team_category c USING(categoryid)
                WHERE s.cid = %i
-               ORDER BY s.delivered, s.printed, s.submittime DESC',
+               ORDER BY s.delivered, s.printed, s.submittime',
               $cid);
 
 /* Loop over the result, store the total of balloons for a team
