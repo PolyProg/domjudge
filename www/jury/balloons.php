@@ -65,7 +65,7 @@ $res = $DB->q("SELECT b.*, s.probid, s.submittime,
                LEFT JOIN team t ON (t.login = s.teamid)
                LEFT JOIN team_category c USING(categoryid)
                WHERE s.cid = %i $freezecond
-               ORDER BY done ASC, balloonid DESC",
+               ORDER BY done ASC, balloonid ASC",
               $cid);
 
 /* Loop over the result, store the total of balloons for a team
