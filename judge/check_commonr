@@ -1,7 +1,7 @@
 #/usr/bin/env bash
 
 CHECKER_BINARY=polynomial_checker
-CHECKER_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+CHECKER_DIR=/opt/domjudge/judgehost/lib/judge/
 OUTPUT=$($CHECKER_DIR/$CHECKER_BINARY "$@" 2>&1)
 RETURN_VAL=$?
 
