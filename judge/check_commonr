@@ -1,0 +1,18 @@
+#/usr/bin/env bash
+
+CHECKER_BINARY=polynomial_checker
+CHECKER_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+OUTPUT=$($CHECKER_DIR/$CHECKER_BINARY "$@" 2>&1)
+RETURN_VAL=$?
+
+if (( $RETURN_VAL == 0 )); then
+  exit 0
+fi
+
+echo $OUTPUT
+
+if (( $RETURN_VAL == 3 )); then
+  exit 17
+fi
+
+exit 0

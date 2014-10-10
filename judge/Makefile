@@ -3,7 +3,7 @@ TOPDIR=..
 endif
 include $(TOPDIR)/Makefile.global
 
-TARGETS = check_float check_boolfind runjury_boolfind runjury_spy runjury_spytwo compare runguard runpipe run_spy run_spytwo
+TARGETS = check_float check_boolfind polynomial_checker runjury_boolfind runjury_spy runjury_spytwo compare runguard runpipe run_spy run_spytwo check_commonr
 
 judgehost: build
 
@@ -37,12 +37,15 @@ runpipe: runpipe.c $(LIBHEADERS) $(LIBSOURCES)
 runjury_boolfind: runjury_boolfind.c
 	$(CC) $(CFLAGS) -static -o $@ $<
 
+polynomial_checker: polynomial_checker.cpp
+	$(CXX) $(CXXFLAGS) -static -o $@ $<
+
 install-judgehost:
 	$(INSTALL_PROG) -t $(DESTDIR)$(judgehost_libjudgedir) \
 		compile*.sh testcase_run.sh chroot-startstop.sh \
 		run run_wrapper run_boolfind run_spy run_spytwo runjury_boolfind runjury_spytwo runjury_spy \
 		compare compare_wrapper compare_float compare_boolfind \
-		check_diff.sh check_float check_boolfind sh-static
+		check_diff.sh check_float check_commonr check_boolfind sh-static
 	$(INSTALL_DATA) -t $(DESTDIR)$(judgehost_libjudgedir) parse_result.xslt \
 		judgedaemon.main.php printdaemon.main.php
 	$(INSTALL_PROG) -t $(DESTDIR)$(judgehost_bindir) judgedaemon printdaemon
