@@ -11,33 +11,28 @@ int main(int argc, char * argv[])
     string ans_yes_no = ans.readToken("YES|NO");
     string out_yes_no = ouf.readToken("YES|NO");
     if (ans_yes_no != out_yes_no) {
-      cout<<"Expected yes but found no"<<endl;
-      quit(_wa);
+      expectedButFound(_wa, ans_yes_no, out_yes_no);
     }
     if (ans_yes_no == "NO") {
-      cerr<<"Answers match"<<endl;
-      quit(_ok);
+      quitf(_ok, "Answers match (\"NO\")");
     }
     for (int i = 0; i < 2; ++i) {
       double j = ans.readDouble();
       double p = ouf.readDouble();
       const double EPS = 1e-8;
       if (!doubleCompare(j, p, EPS)) {
-        printf(
+        quitf(_wa,
               "%d%s numbers differ - expected: '%.8lf', found: '%.8lf', error "
               "= '%.9lf'",
               i+1, englishEnding(n).c_str(), j, p, doubleDelta(j, p));
-        quit(_wa);
       }
     }
     if (!ans.seekEof()) {
-      cout<<"Answer contains extra tokens"<<endl;
-      quit(_fail);
+      quitf(_fail, "Answer contains extra tokens");
     }
     if (!ouf.seekEof()) {
-      cout<<"Participant output contains extra tokens"<<endl;
-      quit(_wa);
+      quitf(_wa, "Participant output contains extra tokens");
     }
-    cerr<<"Answers match (\"YES\")"<<endl;
-    quit(_ok);
+    quitf(_ok, "Answers match (\"YES\")");
 }
+
