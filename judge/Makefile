@@ -44,7 +44,7 @@ install-judgehost:
 	$(INSTALL_PROG) -t $(DESTDIR)$(judgehost_libjudgedir) \
 		compile*.sh testcase_run.sh chroot-startstop.sh \
 		run run_wrapper run_boolfind run_spy run_spytwo runjury_boolfind runjury_spytwo runjury_spy \
-		compare compare_wrapper compare_float compare_boolfind \
+		compare compare_commonr compare_wrapper compare_float compare_boolfind \
 		check_diff.sh check_float check_commonr polynomial_checker check_boolfind sh-static
 	$(INSTALL_DATA) -t $(DESTDIR)$(judgehost_libjudgedir) parse_result.xslt \
 		judgedaemon.main.php printdaemon.main.php
