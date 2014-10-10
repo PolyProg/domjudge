@@ -1,4 +1,4 @@
-#/usr/bin/env bash
+#!/bin/bash
 
 CHECKER_BINARY=polynomial_checker
 CHECKER_DIR=/opt/domjudge/judgehost/lib/judge/
