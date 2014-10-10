@@ -6,7 +6,7 @@ OUTPUT=$($CHECKER_DIR/$CHECKER_BINARY "$@" 2>&1)
 RETURN_VAL=$?
 
 echo "Returning $RETURN_VAL"
-if (( $RETURN_VAL == 0 )); then
+if [ $RETURN_VAL == 0 ]; then
   echo "Exit OK"
   exit 0
 fi
@@ -14,7 +14,7 @@ fi
 echo "Exit NOT OK"
 echo $OUTPUT
 
-if (( $RETURN_VAL == 3 )); then
+if [ $RETURN_VAL == 3 ]; then
   exit 17
 fi
 
