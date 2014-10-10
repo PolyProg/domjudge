@@ -5,9 +5,7 @@ CHECKER_DIR=/opt/domjudge/judgehost/lib/judge/
 OUTPUT=$($CHECKER_DIR/$CHECKER_BINARY "$@" 2>&1)
 RETURN_VAL=$?
 
-echo "Returning x$RETURN_VAL"
 if [ "x$RETURN_VAL" == "x0" ]; then
-  echo "Exit OK"
   exit 0
 fi
 
