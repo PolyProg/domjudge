@@ -2,7 +2,7 @@
 
 CHECKER_BINARY=polynomial_checker
 CHECKER_DIR=/opt/domjudge/judgehost/lib/judge/
-OUTPUT=$($CHECKER_DIR/$CHECKER_BINARY "$@" 2>&1 >/dev/null)
+OUTPUT=$($CHECKER_DIR/$CHECKER_BINARY "$@" 1>&2)
 RETURN_VAL=$?
 
 if (( $RETURN_VAL == 0 )); then
