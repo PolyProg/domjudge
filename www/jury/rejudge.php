@@ -49,7 +49,7 @@ if ( IS_ADMIN && ($table == 'submission' || $table == 'contest') ) {
 	               FROM judging j
 	               LEFT JOIN submission s USING (submitid)
 	               WHERE j.cid = %i AND j.valid = 1 AND
-	               result IS NOT NULL AND result != "correct" AND ' .
+	               result IS NOT NULL AND ' .
 	               $tablemap[$table] . ' = %s', $cid, $id);
 }
 
