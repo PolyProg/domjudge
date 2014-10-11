@@ -1,0 +1,57 @@
+#!/usr/bin/python
+
+# checker for task Loan
+# written by Monika
+
+# The program reads our output and contestant's output
+# and checks if abs(contestant_output - our_output) <= 1.
+
+import sys
+
+if len(sys.argv) != 3:
+    sys.stderr.write('Usage: CONTESTANT.out TESTDATA.out\n')
+    sys.exit(0)
+
+his_filename = sys.argv[1]
+our_filename = sys.argv[2]
+
+# Reading our output.
+with open(our_filename) as f:
+    our_output = int(f.readline())
+
+# Reading contestant's output.
+with open(his_filename) as f:
+    content = f.read()
+    content = content.splitlines()
+ 
+    # CONTESTANT.out must contain a single line
+    if len(content) != 1:
+        sys.stderr.write("Contestant's output does not contain a single line.\n")
+        sys.exit(0)
+
+    content = content[0]
+
+    # CONTESTANT.out must contain a single token
+    if content.count(' ') != 0:
+        sys.stderr.write("Contestant's output must contain a single token.\n")
+        sys.exit(0)
+
+    if not content.isdigit():
+        sys.stderr.write("Contestant's output does not contain a single integer.\n")
+        sys.exit(0)
+
+    his_output = int(content)
+
+if his_output < our_output - 1 or his_output > our_output + 1:
+    sys.stderr.write("WA: The contestant's solution differs by more than 1 from our solution.\n")
+    sys.exit(0)
+
+# The following if should not be necessary but it is here to
+# explicitly check the correct condition.
+
+if our_output - 1 <= his_output <= our_output + 1:
+    # CORRECT ANSWER
+    sys.exit(0)
+
+sys.stderr.write("Check the checker! The program should not get here!\n")
+sys.exit(0)
