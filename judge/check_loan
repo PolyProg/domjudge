@@ -8,12 +8,12 @@
 
 import sys
 
-if len(sys.argv) != 3:
-    sys.stdout.write('Usage: CONTESTANT.out TESTDATA.out\n')
+if len(sys.argv) != 4:
+    sys.stdout.write('Usage: TESTDATA.in CONTESTANT.out TESTDATA.out\n')
     sys.exit(0)
 
-his_filename = sys.argv[1]
-our_filename = sys.argv[2]
+his_filename = sys.argv[2]
+our_filename = sys.argv[3]
 
 # Reading our output.
 with open(our_filename) as f:
