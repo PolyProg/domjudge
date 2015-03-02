@@ -3,7 +3,7 @@ TOPDIR=..
 endif
 include $(TOPDIR)/Makefile.global
 
-TARGETS = check_float check_boolfind check_loan polynomial_checker runjury_boolfind runjury_spy runjury_spytwo compare runguard runpipe run_spy run_spytwo check_commonr
+TARGETS = check_float check_boolfind check_loan check_yesno check_ncmp check_hcmp check_sync3 check_lcmp yesno_checker ncmp_checker hcmp_checker sync3_checker lcmp_checker polynomial_checker runjury_boolfind runjury_spy runjury_spytwo compare runguard runpipe run_spy run_spytwo check_commonr
 
 judgehost: build
 
@@ -40,12 +40,28 @@ runjury_boolfind: runjury_boolfind.c
 polynomial_checker: polynomial_checker.cpp
 	$(CXX) $(CXXFLAGS) -static -o $@ $<
 
+yesno_checker: yesno_checker.cpp
+	$(CXX) $(CXXFLAGS) -static -o $@ $<
+
+ncmp_checker: ncmp_checker.cpp
+	$(CXX) $(CXXFLAGS) -static -o $@ $<
+
+hcmp_checker: hcmp_checker.cpp
+	$(CXX) $(CXXFLAGS) -static -o $@ $<
+
+lcmp_checker: lcmp_checker.cpp
+	$(CXX) $(CXXFLAGS) -static -o $@ $<
+
+sync3_checker: sync3_checker.cpp
+	$(CXX) $(CXXFLAGS) -static -o $@ $<
+
 install-judgehost:
 	$(INSTALL_PROG) -t $(DESTDIR)$(judgehost_libjudgedir) \
 		compile*.sh testcase_run.sh chroot-startstop.sh \
 		run run_wrapper run_boolfind run_spy run_spytwo runjury_boolfind runjury_spytwo runjury_spy \
-		compare compare_commonr compare_wrapper compare_loan compare_float compare_boolfind \
-		check_diff.sh check_float check_loan check_commonr polynomial_checker check_boolfind sh-static
+		compare compare_commonr compare_wrapper compare_loan compare_float compare_boolfind compare_yesno compare_ncmp compare_hcmp compare_sync3 compare_lcmp \
+		check_diff.sh check_float check_loan check_commonr polynomial_checker check_boolfind sh-static \
+                check_yesno check_ncmp check_hcmp check_lcmp check_sync3 yesno_checker ncmp_checker hcmp_checker lcmp_checker sync3_checker
 	$(INSTALL_DATA) -t $(DESTDIR)$(judgehost_libjudgedir) parse_result.xslt \
 		judgedaemon.main.php printdaemon.main.php
 	$(INSTALL_PROG) -t $(DESTDIR)$(judgehost_bindir) judgedaemon printdaemon

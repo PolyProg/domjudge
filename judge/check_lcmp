@@ -1,0 +1,19 @@
+#!/bin/bash
+
+CHECKER_BINARY=lcmp_checker
+CHECKER_DIR=/opt/domjudge/judgehost/lib/judge/
+OUTPUT=$($CHECKER_DIR/$CHECKER_BINARY "$@" 2>&1)
+RETURN_VAL=$?
+
+if [ "x$RETURN_VAL" == "x0" ]; then
+  exit 0
+fi
+
+echo "Exit NOT OK"
+echo $OUTPUT
+
+if [ "x$RETURN_VAL" == "x3" ]; then
+  exit 17
+fi
+
+exit 0
