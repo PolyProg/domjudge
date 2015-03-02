@@ -207,7 +207,10 @@ runcheck ./run testdata.in program.out \
 
 # Check for still running processes:
 if ps -u "$RUNUSER" >/dev/null 2>&1 ; then
-	error "found processes still running"
+  sleep 5
+  if ps -u "$RUNUSER" >/dev/null 2>&1 ; then
+          error "found processes still running"
+  fi
 fi
 
 # Append (heading/trailing) program stderr to error.tmp:
