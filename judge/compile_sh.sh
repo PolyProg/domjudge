@@ -18,7 +18,7 @@ RUNOPTIONS=""
 # Check for '#!' interpreter line: don't allow it to prevent teams
 # from passing options to the interpreter.
 if grep '^#!' "$MAINSOURCE" >/dev/null 2>&1 ; then
-	echo "Error: interpreter statement(s) found:"
+	echo "Error: interpreter statement(s) found, please remove:"
 	grep -n '^#!' "$MAINSOURCE"
 	exit 1
 fi
