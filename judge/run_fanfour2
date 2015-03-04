@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Run wrapper-script called from 'testcase_run.sh'.
 # See that script for more info.
@@ -11,8 +11,8 @@
 
 TESTIN="$1";  shift
 PROGOUT="$1"; shift
-PROGRAM="${!#}"   # The last argument
-SCRIPT="${!#}"2
+PROGRAM="${@: -1}"   # The last argument
+SCRIPT="${@: -1}"2
 
 echo "#!/bin/bash" > "$SCRIPT"
 echo "$PROGRAM | ./runjury | $PROGRAM" >> "$SCRIPT"
