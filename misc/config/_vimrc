@@ -1,0 +1,106 @@
+:syntax on
+:filetype on
+:autocmd FileType c,cpp :set cindent
+:autocmd Filetype c,cpp :syntax keyword Type paddr_t uint
+:set backup
+:set mouse=a
+:set incsearch
+:set hlsearch
+:set ruler
+:set showcmd
+:colorscheme elflord
+:ab #d #define
+:ab #i #include
+:ab #l //--------------------------------------------------------------------------
+:ab #b /***************************************************************************
+:ab #e <Space>**************************************************************************/
+:map <C-J> <C-W>j<C-W>_
+:map <C-K> <C-W>k<C-W>_
+:map Q <Nop>
+:set wmh=0
+:nmap ,s :find %:t:r.cpp<cr>
+:nmap ,S :sf %:t:r.cpp<cr>
+:nmap ,ts :tabf %:t:r.cpp<cr>
+:nmap ,h :find %:t:r.h<cr>
+:nmap ,H :sf %:t:r.h<cr>
+:nmap ,th :tabf %:t:r.h<cr>
+:nmap ,c :find %:t:r.c<cr>
+:nmap ,C :sf %:t:r.c<cr>
+:nmap ,tc :tabf %:t:r.c<cr>
+:nmap ,x :!./
+:nmap ,X :!
+:set laststatus=2
+:set textwidth=0
+set expandtab
+set shiftwidth=2
+set softtabstop=2
+set tabstop=8
+:set autochdir
+
+:set tabpagemax=50
+" Highlight long lines
+" highlight OverLength ctermbg=red ctermfg=white guibg=#592929
+" match OverLength /\%81v.\+/
+
+" Backups:
+set directory=$HOME/.vimbak
+set backup writebackup
+set backupdir=$HOME/.vimbak
+set backupskip=/tmp/*,/var/tmp/tmp/*,$TMPDIR/*,$TMP/*,$TEMP/*
+set history=200          " Store last 200 commands as history.
+" Store in .viminfo: marks for 50 files, 200 lines of registers.
+set viminfo='50,\"200
+set updatecount=40       " Number of characters typed before updating swapfile.
+set updatetime=1000      " Milliseconds before updating swapfile.
+set suffixes=.bak,~,.o,.swp
+
+" Attempt to get sane indenting:
+set autoindent
+set shiftwidth=2
+set expandtab            " Make sure that ^T, <<, >>, and the like use spaces.
+set cinoptions=l1,g0.5s,h0.5s,i2s,+2s,(0,W2s
+" Make sure that the tab key actually inserts a tab.
+imap <TAB> <C-V><TAB>
+
+set wildmenu wildmode=longest:longest,full
+
+" Nice helper stuff:
+set showmode
+set showmatch
+set ruler
+set showcmd
+set incsearch
+set hlsearch             " Highlight previous search results
+set backspace=2
+set visualbell
+
+hi SpecialKey ctermbg=Yellow guibg=Yellow
+
+" Make it so that tabs and trailing spaces are always visible:
+" (Relys on syntax highlighting to turn them yellow.)
+"set list
+"set listchars=tab:\ \ ,trail:\ ,extends:»,precedes:«
+
+" Fix paragraph movement ('{' and '}') to ignore whitespace.
+" (This mostly works correctly, except when used in selection ('V') mode,
+"  where the last search is changed.)
+nmap { ?\S?;?^\s*$<CR>:call histdel("search", -1)<CR>:let @/ = histget("search", -1)<CR>:nohlsearch<CR>:<CR>
+omap { ?\S?;?^\s*$<CR>:call histdel("search", -1)<CR>:let @/ = histget("search", -1)<CR>:nohlsearch<CR>:<CR>
+vmap { ?\S?;?^\s*$<CR>
+nmap } /\S/;/^\s*$<CR>:call histdel("search", -1)<CR>:let @/ = histget("search", -1)<CR>:nohlsearch<CR>:<CR>
+omap } /\S/;/^\s*$<CR>:call histdel("search", -1)<CR>:let @/ = histget("search", -1)<CR>:nohlsearch<CR>:<CR>
+vmap } /\S/;/^\s*$<CR>
+
+" Autoload commands:
+if has("autocmd")
+  " When editing a file, always jump to the last cursor position
+  autocmd BufReadPost * if line("'\"") | exe "'\"" | endif
+endif
+
+if filereadable($GLOBALCONF."/cond/".$CLUSTER."-vimrc")
+  source $GLOBALCONF/cond/$CLUSTER-vimrc
+endif
+if filereadable($GLOBALCONF."/cond/".$HOST."-vimrc")
+  source $GLOBALCONF/cond/$HOST-vimrc
+endif
+
