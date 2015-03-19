@@ -193,6 +193,7 @@ CREATE TABLE `problem` (
   `allow_submit` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT 'Are submissions accepted for this problem?',
   `allow_judge` tinyint(1) unsigned NOT NULL DEFAULT '1' COMMENT 'Are submissions for this problem judged?',
   `timelimit` int(4) unsigned NOT NULL DEFAULT '0' COMMENT 'Maximum run time for this problem',
+  `special_runtime` varchar(25) DEFAULT NULL COMMENT 'Special custom runtime. Write 5,12 to give java/scala 5 second, python/ruby 12 seconds.',
   `special_run` varchar(25) DEFAULT NULL COMMENT 'Script to run submissions for this problem',
   `special_compare` varchar(25) DEFAULT NULL COMMENT 'Script to compare problem and jury output for this problem',
   `library_prefix` varchar(255) default NULL COMMENT 'Name of the file (without extension) that will be compiled along with the source code',

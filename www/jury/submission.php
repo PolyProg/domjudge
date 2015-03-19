@@ -33,7 +33,7 @@ $title = 'Submission s'.@$id;
 if ( ! $id ) error("Missing or invalid submission id");
 
 $submdata = $DB->q('MAYBETUPLE SELECT s.teamid, s.probid, s.langid,
-                    s.submittime, s.valid, c.cid, c.contestname,
+                    s.submittime, s.valid, c.cid, c.contestname, p.special_runtime,
                     t.name AS teamname, l.name AS langname, p.name AS probname,
                     CEILING(time_factor*timelimit) AS maxruntime
                     FROM submission s
@@ -44,6 +44,18 @@ $submdata = $DB->q('MAYBETUPLE SELECT s.teamid, s.probid, s.langid,
                     WHERE submitid = %i', $id);
 
 if ( ! $submdata ) error ("Missing submission data");
+
+error_log("Special runtime: <".$submdata['special_runtime'].">");
+// Special runtime for java/scala and for py2/py3/ruby
+if($submdata['special_runtime'] != "") {
+  $special_runtime = explode(",", $submdata['special_runtime']);
+  if (count($special_runtime)>= 1 && ($submdata['langid'] == "java" || $submdata['langid'] == "scala")) {
+    $submdata['maxruntime'] = (int)($special_runtime[0]);
+  }
+  if (count($special_runtime)>= 2 &&($submdata['langid'] == "py2" || $submdata['langid'] == "py3" || $submdata['langid'] == "rb")) {
+    $submdata['maxruntime'] = (int)($special_runtime[1]);
+  }
+}
 
 $jdata = $DB->q('KEYTABLE SELECT judgingid AS ARRAYKEY, result, valid, starttime,
                  judgehost, verified, jury_member, verify_comment

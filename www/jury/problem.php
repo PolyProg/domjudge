@@ -98,7 +98,7 @@ if ( !empty($cmd) ):
 	if ( $cmd == 'edit' ) {
 		echo "<tr><td>Problem ID:</td><td class=\"probid\">";
 		$row = $DB->q('TUPLE SELECT p.probid,p.cid,p.name,p.allow_submit,p.allow_judge,
-	                                    p.timelimit,p.special_run,p.special_compare,p.depends,p.color,
+	                                    p.timelimit,p.special_run,p.special_compare,p.depends,p.color,p.special_runtime,
                                             p.library_prefix,
 	                                    COUNT(testcaseid) AS testcases
 		               FROM problem p
@@ -141,6 +141,9 @@ echo addSelect('data[0][cid]', $cmap, @$row['cid'], true);
 <tr><td><label for="data_0__timelimit_">Timelimit:</label></td>
 <td><?php echo addInputField('number','data[0][timelimit]', @$row['timelimit'],
 	' size="5" maxlength="5" min="1" max="10000" required')?> sec</td></tr>
+
+<tr><td><label for="data_0__special_runtime_">Runtime for java,python:</label></td>
+<td><?php echo addInput('data[0][special_runtime]', @$row['special_runtime'], 30, 25)?></td></tr>
 
 <tr><td><label for="data_0__color_">Balloon colour:</label></td>
 <td><?php echo addInputField('color','data[0][color]', @$row['color'],
@@ -201,7 +204,7 @@ exit;
 endif;
 
 $data = $DB->q('TUPLE SELECT p.probid,p.cid,p.name,p.allow_submit,p.allow_judge,
-                             p.timelimit,p.special_run,p.special_compare,p.color,
+                             p.timelimit,p.special_run,p.special_runtime,p.special_compare,p.color,
                              p.problemtext_type,p.problemdata_type,p.problemlib_type,
                              c.contestname,p.depends,count(rank) AS ntestcases
                 FROM problem p
@@ -245,6 +248,10 @@ echo addForm($pagename . '?id=' . urlencode($id),
 ?></td></tr>
 <tr><td>Timelimit:   </td><td><?php echo (int)$data['timelimit']?> sec</td></tr>
 <?php
+if ( !empty($data['special_runtime']) ) {
+	echo '<tr><td>Runtime for java,python:</td><td>' .
+		htmlspecialchars($data['special_runtime']) . "</td></tr>\n";
+}
 if ( !empty($data['color']) ) {
 	echo '<tr><td>Colour:</td><td><img style="background-color: ' .
 		htmlspecialchars($data['color']) .

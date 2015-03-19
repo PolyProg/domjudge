@@ -15,7 +15,7 @@ echo "<h1>Problems</h1>\n\n";
 
 // Select all data, sort problems from the current contest on top.
 $res = $DB->q('SELECT p.probid,p.name,p.allow_submit,p.allow_judge,p.timelimit,p.color,
-               p.problemtext_type,p.problemdata_type,p.problemlib_type,p.depends,p.library_prefix,
+               p.problemtext_type,p.problemdata_type,p.problemlib_type,p.depends,p.library_prefix,p.special_runtime,
                c.*, COUNT(testcaseid) AS testcases
                FROM problem p
                NATURAL JOIN contest c
@@ -61,7 +61,9 @@ if( $res->count() == 0 ) {
 			printyn($row['allow_submit']) . "</a>" .
 			"</td><td class=\"tdcenter\">" . $link .
 			printyn($row['allow_judge']) . "</a>" .
-			"</td><td>" . $link . (int)$row['timelimit'] . "</a>" .
+			"</td><td>" . $link . (int)$row['timelimit'] .
+                        (($row['special_runtime']!="")?(" (".$row['special_runtime'].")"):"")
+                        . "</a>" .
 			"</td>".
 			( !empty($row['color'])
 			? '<td title="' . htmlspecialchars($row['color']) .

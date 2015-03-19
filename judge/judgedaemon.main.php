@@ -292,7 +292,7 @@ while ( TRUE ) {
 	// get maximum runtime and other parameters
 	$row = $DB->q('TUPLE SELECT CEILING(time_factor*timelimit) AS maxruntime,
 	               s.submitid, s.langid, s.teamid, s.probid,
-	               p.special_run, p.special_compare, p.library_prefix
+	               p.special_run, p.special_compare, p.library_prefix, p.special_runtime
 	               FROM submission s, problem p, language l
 	               WHERE s.probid = p.probid AND s.langid = l.langid AND
 	               judgemark = %s AND judgehost = %s', $mark, $myhost);
@@ -334,6 +334,17 @@ function judge($mark, $row, $judgingid)
         } else {
           putenv('MEMLIMIT='      . dbconfig_get('memory_limit_c'));
           putenv('MEMLIMIT_CONTESTANT=' . dbconfig_get('memory_limit_c'));
+        }
+
+        // Special runtime for java/scala and for py2/py3/ruby
+        if($row['special_runtime'] != "") {
+          $special_runtime = explode(",", $row['special_runtime']);
+          if (count($special_runtime)>= 1 && ($row['langid'] == "java" || $row['langid'] == "scala")) {
+            $row['maxruntime'] = (int)($special_runtime[0]);
+          }
+          if (count($special_runtime)>= 2 &&($row['langid'] == "py2" || $row['langid'] == "py3" || $row['langid'] == "rb")) {
+            $row['maxruntime'] = (int)($special_runtime[1]);
+          }
         }
 
 	$cpuset_opt = "";
