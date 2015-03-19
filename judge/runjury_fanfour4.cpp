@@ -2,7 +2,7 @@
 
 using namespace std;
 
-const int TESTS = 100000;
+const int TESTS = 10000;
 
 static unsigned int my_rand(void)
 {
