@@ -22,12 +22,14 @@ function usage()
 	    "  -d       daemonize after startup\n" .
 	    "  -n <id>  daemon number\n" .
 	    "  -v       set verbosity to LEVEL (syslog levels)\n" .
+	    "  -o <lang> only judge language <lang>\n" .
+	    "  -e <lang> exclude language <lang>\n" .
 	    "  -h       display this help and exit\n" .
 	    "  -V       output version information and exit\n\n";
 	exit;
 }
 
-$options = getopt("dv:n:hV");
+$options = getopt("dv:n:hVo:e:");
 // With PHP version >= 5.3 we can also use long options.
 // FIXME: getopt doesn't return FALSE on parse failure as documented!
 if ( $options===FALSE ) {
@@ -37,6 +39,8 @@ if ( $options===FALSE ) {
 if ( isset($options['d']) ) $options['daemon']  = $options['d'];
 if ( isset($options['v']) ) $options['verbose'] = $options['v'];
 if ( isset($options['n']) ) $options['daemonid'] = $options['n'];
+if ( isset($options['o']) ) $options['only'] = explode(",", $options['o']);
+if ( isset($options['e']) ) $options['exclude'] = explode(",", $options['e']);
 
 if ( isset($options['V']) ) version();
 if ( isset($options['h']) ) usage();
@@ -223,6 +227,12 @@ while ( TRUE ) {
 		continue;
 	}
 	$judgable_lang = array_unique(array_values($langs));
+        if(isset($options["only"])) {
+          $judgable_lang = array_intersect($judgable_lang, $options["only"]);
+        }
+        if(isset($options["exclude"])) {
+          $judgable_lang = array_diff($judgable_lang, $options["exclude"]);
+        }
 
 	// First, use a select to see whether there are any judgeable
 	// submissions. This query is query-cacheable, and doing a select
