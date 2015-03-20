@@ -2,7 +2,7 @@
 
 using namespace std;
 
-const int TESTS = 10000;
+const int TESTS = 100000;
 
 int main(int argc, char** argv) {
   bool fail = false;
