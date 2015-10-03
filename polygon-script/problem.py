@@ -10,7 +10,7 @@ import zipfile
 import StringIO
 
 class Problem:
-  def __init__(self, folder, probid, domjudgeContestId, polygonContestPath, dependency, htmlcolor, compare, run, offline):
+  def __init__(self, folder, probid, domjudgeContestId, polygonContestPath, dependency, htmlcolor, compare, run, offline, runtime, special_runtime):
     self.folder = folder
     self.probid = probid
     self.domjudgeContestId = domjudgeContestId
@@ -20,11 +20,14 @@ class Problem:
     self.compare = compare
     self.run = run
     self.offline = offline
+    self.runtime = str(runtime)
+    self.special_runtime = special_runtime
 
     jsonfilename = polygonContestPath + "/problems/" + folder + "/statements/english/problem-properties.json"
     j = json.load(open(jsonfilename, 'r'))
     self.name = j["name"]
-    self.runtime = str(int(j["timeLimit"])/1000)
+    if self.runtime == "0":
+      self.runtime = str(int(j["timeLimit"])/1000)
 
     self.sampleio = list()
     problemxml = polygonContestPath + "/problems/" + folder + "/problem.xml"
@@ -179,6 +182,8 @@ class Problem:
       config += "depends = " + self.dependency + "\n"
     if self.run is not None and self.run != "":
       config += "special_run = " + self.run + "\n"
+    if self.special_runtime is not None and self.special_runtime != "":
+      config += "special_runtime = " + self.special_runtime + "\n"
     if self.compare is not None and self.compare != "":
       config += "special_compare = " + self.compare + "\n"
     zipf.writestr("domjudge-problem.ini", config)

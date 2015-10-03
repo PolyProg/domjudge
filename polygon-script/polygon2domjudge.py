@@ -28,14 +28,14 @@ def setDomjudgeContestId(id):
   global domjudgeContestId
   domjudgeContestId = str(id)
 
-def addProblem(folder, probid, depends, color, compare="", run="", offline=None):
+def addProblem(folder, probid, depends, color, compare="", run="", offline=None, runtime=0, special_runtime=""):
   global lastPage, lastProbId, polygonContestPath, domjudgeContestId, args
   htmlcolor = colors_dict[color]
   if depends:
     dependency = lastProbId
   else:
     dependency = ""
-  p = Problem(folder, probid, domjudgeContestId, polygonContestPath, dependency, htmlcolor, compare, run, offline)
+  p = Problem(folder, probid, domjudgeContestId, polygonContestPath, dependency, htmlcolor, compare, run, offline, runtime, special_runtime)
   problems.append(p)
   if args.latex:
     p.compileLatex()
