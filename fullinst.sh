@@ -9,5 +9,7 @@ else
   ./configure
   bash inst.sh
   sql/dj-setup-database -u root -r install || (echo "Database already installed... skipping" && sleep 2)
-  cp etc/apache.conf /etc/apache2/conf.d/domjudge.conf && apache2ctl graceful
+  cp misc/domjudge.conf /etc/apache2/conf-available/domjudge.conf && \
+  (cd /etc/apache2/conf-enabled && ln -sf ../conf-available/domjudge.conf) && \
+  service apache2 restart
 fi
