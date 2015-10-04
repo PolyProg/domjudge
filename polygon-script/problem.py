@@ -52,8 +52,10 @@ class Problem:
       self.run, self.compare, self.ntests, str(self.sampleio)
       )
 
-  def compileLatex(self):
-    for lang in ["english", "french", "german"]:
+  def compileLatex(self, languages):
+    if len(languages) == 0:
+      raise BaseException("Need at least one language to add problems, please call addLanguage")
+    for lang in languages:
       latexfolder = self.polygonContestPath + "/problems/" + self.folder + "/statements/"+lang
       latexfile = "statement"
       latexpath = latexfolder+"/"+latexfile+".tex"
@@ -62,6 +64,7 @@ class Problem:
       # Update problem ID in sty file (yes, this is a hack :-) )
       safeprobid = self.probid.replace("_", "\\\\_")
       os.system("sed -i 's/.*textbf.*arabic.problem.*/\\\\textbf{\\\\problemheadfont\\\\textsf{\\\\kw@Problem\\\\ "+safeprobid+".\\\\ #1}}%/' "+latexfolder+"/olymp.sty")
+      os.system("sed -i 's/\\\\vbox/\\\\providecommand{\\\\ignorethis}[1]{}\\\\ignorethis/' "+latexfolder+"/olymp.sty")
       os.system("echo '\\input problem.tex' >> "+latexpath)
       os.system("echo '\\end{document}' >> "+latexpath)
       os.system("(cd "+latexfolder+" ;" +
@@ -72,11 +75,11 @@ class Problem:
                 " mv "+latexfile+".pdf problem.pdf ;"+
                 " rm -f *.log *.aux *.dvi *.ps)")
 
-  def package(self, args):
+  def package(self, args, languages):
     ok = True
     zipf = zipfile.ZipFile("djConfig/" + self.probid + ".zip", "w", zipfile.ZIP_DEFLATED)
     ok = self.makeConfigurationFile(zipf) and ok
-    ok = self.addStatement(zipf) and ok
+    ok = self.addStatement(zipf, languages) and ok
     ok = self.addContestant(zipf) and ok
     ok = self.addIO(zipf) and ok
     if args.solutions:
@@ -94,10 +97,13 @@ class Problem:
 
     return ok
 
-  def addStatement(self, zipf):
+  def addStatement(self, zipf, languages):
     statementsfolder = self.polygonContestPath + "/problems/" + self.folder + "/statements"
-    os.system("(cd "+statementsfolder+"; " +
-              " pdftk english/problem.pdf french/problem.pdf german/problem.pdf cat output problem.pdf)");
+    pdftk = "pdftk "
+    for lang in languages:
+      pdftk += lang+"/problem.pdf "
+    pdftk += "cat output problem.pdf"
+    os.system("(cd "+statementsfolder+";" + pdftk + ")");
     statement = statementsfolder+"/problem.pdf"
     zipf.write(statement, "problem.pdf")
     return True
@@ -124,6 +130,7 @@ class Problem:
     testsfolder = self.polygonContestPath + "/problems/" + self.folder + "/files"
     for entry in os.listdir(testsfolder):
       base, ext = os.path.splitext(testsfolder + "/" + entry)
+      # To include a file in the zip given to contestants, prefix it with "DOMJUDGECONTESTANT_" in Polygon
       if os.path.isfile(testsfolder + "/" + entry) and entry[:19] == "DOMJUDGECONTESTANT_":
         if ext != ".zip":
           contzip.write(testsfolder+"/"+entry, entry[19:])

@@ -9,11 +9,16 @@ from problem import Problem
 
 problems = list()
 args = None
+languages = list()
 
 lastPage=1
 lastProbId=""
 polygonContestPath = "contest-0"
 domjudgeContestId = 1
+
+def addLanguage(lang):
+  global languages
+  languages.append(lang)
 
 def setPolygonContestId(id):
   global polygonContestPath, args
@@ -28,8 +33,8 @@ def setDomjudgeContestId(id):
   global domjudgeContestId
   domjudgeContestId = str(id)
 
-def addProblem(folder, probid, depends, color, compare="", run="", offline=None, runtime=0, special_runtime=""):
-  global lastPage, lastProbId, polygonContestPath, domjudgeContestId, args
+def addProblem(folder, probid, color, depends=False, compare="", run="", offline=None, runtime=0, special_runtime=""):
+  global lastPage, lastProbId, polygonContestPath, domjudgeContestId, args, languages
   htmlcolor = colors_dict[color]
   if depends:
     dependency = lastProbId
@@ -38,7 +43,7 @@ def addProblem(folder, probid, depends, color, compare="", run="", offline=None,
   p = Problem(folder, probid, domjudgeContestId, polygonContestPath, dependency, htmlcolor, compare, run, offline, runtime, special_runtime)
   problems.append(p)
   if args.latex:
-    p.compileLatex()
+    p.compileLatex(languages)
   lastProbId = probid
 
 
@@ -52,12 +57,12 @@ def parseArguments():
     args = parser.parse_args()
 
 def main():
-  global args
+  global args, languages
   parseArguments()
   execfile("config.py")
   os.system("mkdir -p djConfig")
   for p in problems:
-    p.package(args)
+    p.package(args, languages)
     print p
 
 
