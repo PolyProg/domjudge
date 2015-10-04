@@ -9,6 +9,10 @@
 require('init.php');
 $title = 'Teams';
 
+if ( IS_ADMIN && isset($_POST['deleteall']) && isset($_POST['confirm'])) {
+  $DB->q('DELETE from team where name != "domjudge"');
+}
+
 $teams = $DB->q('SELECT t.*,c.name AS catname,a.name AS affname
                  FROM team t
                  LEFT JOIN team_category c USING (categoryid)
@@ -100,6 +104,12 @@ if( $teams->count() == 0 ) {
 
 if ( IS_ADMIN ) {
 	echo "<p>" .addLink('team') . "</p>\n";
+        echo "<p><p />";
+        echo "\n" . addForm('teams.php', 'post', null, 'multipart/form-data') .
+                addCheckBox('confirm') . "Confirm&nbsp;" .
+                addSubmit('Delete all teams', 'deleteall') .
+                addEndForm() . "\n";
+        echo "<p><p />";
 }
 
 require(LIBWWWDIR . '/footer.php');
