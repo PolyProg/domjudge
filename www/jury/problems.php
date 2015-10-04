@@ -13,6 +13,10 @@ require(LIBWWWDIR . '/header.php');
 
 echo "<h1>Problems</h1>\n\n";
 
+if ( IS_ADMIN && isset($_POST['deleteall']) && isset($_POST['confirm'])) {
+  $DB->q('DELETE from problem');
+}
+
 // Select all data, sort problems from the current contest on top.
 $res = $DB->q('SELECT p.probid,p.name,p.allow_submit,p.allow_judge,p.timelimit,p.color,
                p.problemtext_type,p.problemdata_type,p.problemlib_type,p.depends,p.library_prefix,p.special_runtime,
@@ -121,6 +125,12 @@ if ( IS_ADMIN ) {
 	 		addSubmit('Upload', 'upload') .
 	 		addEndForm() . "\n";
 	}
+        echo "<p><p />";
+        echo "\n" . addForm('problems.php', 'post', null, 'multipart/form-data') .
+                addCheckBox('confirm') . "Confirm&nbsp;" .
+                addSubmit('Delete all problems', 'deleteall') .
+                addEndForm() . "\n";
+        echo "<p><p />";
 }
 
 require(LIBWWWDIR . '/footer.php');
