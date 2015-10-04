@@ -10,7 +10,7 @@ require('init.php');
 $title = 'Teams';
 
 if ( IS_ADMIN && isset($_POST['deleteall']) && isset($_POST['confirm'])) {
-  $DB->q('DELETE from team where name != "domjudge"');
+  $DB->q('DELETE from team where login != "domjudge"');
 }
 
 $teams = $DB->q('SELECT t.*,c.name AS catname,a.name AS affname
