@@ -22,6 +22,7 @@ class Problem:
     self.offline = offline
     self.runtime = str(runtime)
     self.special_runtime = special_runtime
+    self.testsets = list()
 
     jsonfilename = polygonContestPath + "/problems/" + folder + "/statements/english/problem-properties.json"
     j = json.load(open(jsonfilename, 'r'))
@@ -34,11 +35,17 @@ class Problem:
     tree = ET.parse(problemxml)
     root = tree.getroot()
     self.ntests = 0
-    for test in root.iter('test'):
-      if "method" in test.attrib:
-        self.ntests += 1
-        if ("sample" in test.attrib) and test.attrib["sample"] == "true":
-          self.sampleio.append(self.ntests)
+    for testset in root.iter('testset'):
+      if "name" in testset.attrib:
+        self.nteststs = 0
+        testsetname = testset.attrib["name"]
+        self.testsets.append(testsetname)
+        for test in testset.iter('test'):
+          if "method" in test.attrib:
+            self.ntests += 1
+            self.nteststs += 1
+            if ("sample" in test.attrib) and test.attrib["sample"] == "true":
+              self.sampleio.append(testsetname+"/"+str(self.nteststs))
 
     if self.compare == "":
       for checker in root.iter('checker'):
@@ -112,21 +119,26 @@ class Problem:
     tempfile = StringIO.StringIO()
     contzip = zipfile.ZipFile(tempfile, "w", zipfile.ZIP_DEFLATED)
 
-    testsfolder = self.polygonContestPath + "/problems/" + self.folder + "/tests"
     count = 0
-    for entry in os.listdir(testsfolder):
-      base, ext = os.path.splitext(testsfolder + "/" + entry)
-      logging.debug(entry + " --- " + base + " --- " + ext)
-      if os.path.isfile(testsfolder + "/" + entry) and ext == ".a":
-        if int(entry[:2]) in self.sampleio:
-          contzip.write(testsfolder+"/"+entry, entry[:-2]+".out")
-          if os.path.isfile(testsfolder + "/" + entry[:-2]):
-            contzip.write(testsfolder+"/"+entry[:-2], entry[:-2]+".in")
-            count += 1
-        if int(entry[:2]) == self.offline:
-          if os.path.isfile(testsfolder + "/" + entry[:-2]):
-            contzip.write(testsfolder+"/"+entry[:-2], "realInput.in")
-            count += 1
+    for testset in self.testsets:
+      testsfolder = self.polygonContestPath + "/problems/" + self.folder + "/" + testset
+      for entry in os.listdir(testsfolder):
+        base, ext = os.path.splitext(testsfolder + "/" + entry)
+        logging.debug(entry + " --- " + base + " --- " + ext)
+        if os.path.isfile(testsfolder + "/" + entry) and ext == ".a":
+          testid = entry[:2]
+          if testset+"/"+str(int(testid)) in self.sampleio:
+            contzip.write(testsfolder+"/"+entry, testset+testid+".out")
+            if os.path.isfile(testsfolder + "/" + testid):
+              contzip.write(testsfolder+"/"+testid, testset+testid+".in")
+              count += 1
+          if testset+"/"+str(int(testid)) == self.offline:
+            if os.path.isfile(testsfolder + "/" + testid):
+              contzip.write(testsfolder+"/"+testid, "realInput.in")
+              count += 1
+    if count == 0:
+      contzip.writestr("no-sample-testcases.txt", "This problem has no sample testcases.")
+
     testsfolder = self.polygonContestPath + "/problems/" + self.folder + "/files"
     for entry in os.listdir(testsfolder):
       base, ext = os.path.splitext(testsfolder + "/" + entry)
@@ -143,20 +155,22 @@ class Problem:
     contzip.close()
     zipf.writestr("data.zip", tempfile.getvalue())
     tempfile.close()
-    return True
+    return count == len(self.sampleio)
 
   def addIO(self, zipf):
-    testsfolder = self.polygonContestPath + "/problems/" + self.folder + "/tests"
     count = 0
-    for entry in os.listdir(testsfolder):
-      base, ext = os.path.splitext(testsfolder + "/" + entry)
-      logging.debug(entry + " --- " + base + " --- " + ext)
-      if os.path.isfile(testsfolder + "/" + entry) and ext == ".a":
-        if (self.offline is None) or int(entry[:-2]) == self.offline:
-          zipf.write(testsfolder+"/"+entry, entry[:-2]+".out")
-          if os.path.isfile(testsfolder + "/" + entry[:-2]):
-            zipf.write(testsfolder+"/"+entry[:-2], entry[:-2]+".in")
-            count += 1
+    for testset in self.testsets:
+      testsfolder = self.polygonContestPath + "/problems/" + self.folder + "/" + testset
+      for entry in os.listdir(testsfolder):
+        base, ext = os.path.splitext(testsfolder + "/" + entry)
+        logging.debug(entry + " --- " + base + " --- " + ext)
+        if os.path.isfile(testsfolder + "/" + entry) and ext == ".a":
+          testid = entry[:-2]
+          if (self.offline is None) or testset+"/"+str(int(testid)) == self.offline:
+            zipf.write(testsfolder+"/"+entry, testset+testid+".out")
+            if os.path.isfile(testsfolder + "/" + testid):
+              zipf.write(testsfolder+"/"+testid, testset+testid+".in")
+              count += 1
     return count == self.ntests or ((self.offline is not None) and count == 1)
 
   def addSolutions(self, zipf):

@@ -21,6 +21,13 @@ addLanguage("english")     # Call this method for every language you have statem
 #  run: name of a special runscript, used for HC2
 addProblem(folder="tuples",                          probid="A_tuples", color="red")
 addProblem(folder="bombs",                           probid="B_bombs",  color="orange")
+addProblem(folder="diophantine-equation",            probid="C_abc",    color="yellow")
+addProblem(folder="maketeams",                       probid="D_teams",  color="green")
+addProblem(folder="longestcommonsubsequence",        probid="E_exams",  color="blue")
+addProblem(folder="activecells",                     probid="F_active", color="violet")
+addProblem(folder="permutations",                    probid="G_permut", color="brown", compare="permut")
+addProblem(folder="asubseqb",                        probid="H_seq",    color="white")
+addProblem(folder="squaregrid",                      probid="I_square", color="black")
 
 if False:
   addLanguage("english")
