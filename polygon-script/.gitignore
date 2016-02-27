@@ -1,0 +1,7 @@
+# Compiled files
+*.pyc
+
+# Output files
+djConfig/
+contest-*.zip
+contest-*/

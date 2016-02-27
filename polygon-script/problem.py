@@ -94,10 +94,10 @@ class Problem:
     zipf.close()
     if args.checkers and self.compare != "":
       checkersource = self.polygonContestPath + "/problems/" + self.folder + "/check.cpp"
-      os.system("cp " + checkersource + " ../domjudge/judge/" + self.compare + "_checker.cpp")
+      os.system("cp " + checkersource + " ../judge/" + self.compare + "_checker.cpp")
     if args.checkers and self.run != "":
       checkersource = self.polygonContestPath + "/problems/" + self.folder + "/files/runjury_"+self.run+".cpp"
-      os.system("cp " + checkersource + " ../domjudge/judge/runjury_" + self.run + ".cpp")
+      os.system("cp " + checkersource + " ../judge/runjury_" + self.run + ".cpp")
       
     if not ok:
       print "!!! PROBLEM NOT OK"
