@@ -1,6 +1,6 @@
 #!/bin/bash
 
-CHECKER_BINARY=yesno_wcmp
+CHECKER_BINARY=wcmp_checker
 CHECKER_DIR=/opt/domjudge/judgehost/lib/judge/
 OUTPUT=$($CHECKER_DIR/$CHECKER_BINARY "$@" 2>&1)
 RETURN_VAL=$?
