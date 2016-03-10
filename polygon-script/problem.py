@@ -10,6 +10,7 @@ import zipfile
 import StringIO
 
 contDataTag = None
+suppressRealInputForOffline = False
 
 class Problem:
   def __init__(self, folder, probid, domjudgeContestId, polygonContestPath, dependency, htmlcolor, compare, run, offline, runtime, special_runtime):
@@ -118,7 +119,7 @@ class Problem:
     return True
 
   def addContestant(self, zipf):
-    global contDataTag 
+    global contDataTag, suppressRealInputForOffline
     tempfile = StringIO.StringIO()
     contzip = zipfile.ZipFile(tempfile, "w", zipfile.ZIP_DEFLATED)
 
@@ -137,7 +138,8 @@ class Problem:
               count += 1
           if testset+"/"+str(int(testid)) == self.offline:
             if os.path.isfile(testsfolder + "/" + testid):
-              contzip.write(testsfolder+"/"+testid, "realInput.in")
+              if not suppressRealInputForOffline:
+                contzip.write(testsfolder+"/"+testid, "realInput.in")
               count += 1
     if count == 0:
       contzip.writestr("no-sample-testcases.txt", "This problem has no sample testcases.")
@@ -145,13 +147,19 @@ class Problem:
     testsfolder = self.polygonContestPath + "/problems/" + self.folder + "/files"
     for entry in os.listdir(testsfolder):
       base, ext = os.path.splitext(testsfolder + "/" + entry)
+      if os.path.isfile(testsfolder + "/" + entry) and entry[-8:]==".zip.001":
+        os.system("(cd "+testsfolder+"; cat "+entry[:-3]+"* > "+entry[:-4]+")")
+      
+    for entry in os.listdir(testsfolder):
+      base, ext = os.path.splitext(testsfolder + "/" + entry)
       if os.path.isfile(testsfolder + "/" + entry) and (contDataTag is not None and entry.find(contDataTag) != -1):
-        if ext != ".zip":
-          contzip.write(testsfolder+"/"+entry, entry)
-        else:
+        if ext == ".zip":
           with zipfile.ZipFile(testsfolder+"/"+entry, "r") as z:
             for name in z.namelist():
               contzip.writestr(name, z.read(name))
+        elif entry[-8:-3] != ".zip.":
+          contzip.write(testsfolder+"/"+entry, entry)
+
 
 
     contzip.close()

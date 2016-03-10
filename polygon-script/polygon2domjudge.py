@@ -24,6 +24,9 @@ def addLanguage(lang):
 def contestantDataTag(tag):
   problem.contDataTag = tag
 
+def suppressRealInputForOffline(value):
+  problem.suppressRealInputForOffline = value
+
 def setPolygonContestId(id):
   global polygonContestPath, args
   polygonContestPath = "contest-" + str(id)

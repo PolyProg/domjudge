@@ -22,6 +22,8 @@ addLanguage("english")     # Call this method for every language you have statem
 
 # Import all files to contestant package that contain this string
 contestantDataTag("contestant_package")
+# Don't add realInput.in to contestant package for offline tasks
+suppressRealInputForOffline(True)
 
 # Dry run
 addProblem(folder="hc2-2016-dryrun-easy",       probid="X_dry1",   depends=False,     runtime=1 , special_runtime="1,1",   color="lavender")
@@ -50,5 +52,7 @@ addProblem(folder="hc2-2016-walls-hard",        probid="L_wall3",  depends=True,
 
 addProblem(folder="jigsaw-puzzle-easy",         probid="M_jiggy1", depends=False,     runtime=15, special_runtime="22,45", color="lightcoral", offline="tests/1", compare="jiggy1")
 addProblem(folder="jigsaw-puzzle-medium",       probid="N_jiggy2", depends=True,      runtime=15, special_runtime="22,45", color="red",        offline="tests/1", compare="jiggy2")
-#addProblem(folder="jigsaw-puzzle-hard",       probid="O_jiggy3", depends=True,      runtime=15, special_runtime="22,45", color="darkred")
+
+addProblem(folder="connect-the-dots-medium",    probid="O_dots2",   depends=False,    runtime=3 , special_runtime="4,6",   color="orange", compare="dots2")
+addProblem(folder="connect-the-dots-hard",      probid="P_dots3",   depends=True,     runtime=8 , special_runtime="12,16", color="darkorange", compare="dots3")
 
