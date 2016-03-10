@@ -5,6 +5,7 @@ import argparse
 import logging
 
 from colors import colors_dict
+import problem
 from problem import Problem
 
 problems = list()
@@ -19,6 +20,9 @@ domjudgeContestId = 1
 def addLanguage(lang):
   global languages
   languages.append(lang)
+
+def contestantDataTag(tag):
+  problem.contDataTag = tag
 
 def setPolygonContestId(id):
   global polygonContestPath, args

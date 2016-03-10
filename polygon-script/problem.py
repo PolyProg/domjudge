@@ -9,6 +9,8 @@ import string
 import zipfile
 import StringIO
 
+contDataTag = None
+
 class Problem:
   def __init__(self, folder, probid, domjudgeContestId, polygonContestPath, dependency, htmlcolor, compare, run, offline, runtime, special_runtime):
     self.folder = folder
@@ -116,6 +118,7 @@ class Problem:
     return True
 
   def addContestant(self, zipf):
+    global contDataTag 
     tempfile = StringIO.StringIO()
     contzip = zipfile.ZipFile(tempfile, "w", zipfile.ZIP_DEFLATED)
 
@@ -142,10 +145,9 @@ class Problem:
     testsfolder = self.polygonContestPath + "/problems/" + self.folder + "/files"
     for entry in os.listdir(testsfolder):
       base, ext = os.path.splitext(testsfolder + "/" + entry)
-      # To include a file in the zip given to contestants, prefix it with "DOMJUDGECONTESTANT_" in Polygon
-      if os.path.isfile(testsfolder + "/" + entry) and entry[:19] == "DOMJUDGECONTESTANT_":
+      if os.path.isfile(testsfolder + "/" + entry) and (contDataTag is not None and entry.find(contDataTag) != -1):
         if ext != ".zip":
-          contzip.write(testsfolder+"/"+entry, entry[19:])
+          contzip.write(testsfolder+"/"+entry, entry)
         else:
           with zipfile.ZipFile(testsfolder+"/"+entry, "r") as z:
             for name in z.namelist():

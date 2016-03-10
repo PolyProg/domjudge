@@ -20,6 +20,9 @@ addLanguage("english")     # Call this method for every language you have statem
 #  compare = name of the script that checks the solution of the contestant. Per default, uses the one from Polygon.
 #  run: name of a special runscript, used for HC2
 
+# Import all files to contestant package that contain this string
+contestantDataTag("contestant_package")
+
 # Dry run
 addProblem(folder="hc2-2016-dryrun-easy",       probid="X_dry1",   depends=False,     runtime=1 , special_runtime="1,1",   color="lavender")
 addProblem(folder="hc2-2016-dryrun-medium",     probid="Y_dry2",   depends=True,      runtime=1 , special_runtime="1,1",   color="mediumpurple")
