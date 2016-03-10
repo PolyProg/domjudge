@@ -27,7 +27,7 @@ suppressRealInputForOffline(True)
 
 # Dry run
 addProblem(folder="hc2-2016-dryrun-easy",       probid="X_dry1",   depends=False,     runtime=1 , special_runtime="1,1",   color="lavender")
-addProblem(folder="hc2-2016-dryrun-medium",     probid="Y_dry2",   depends=True,      runtime=1 , special_runtime="1,1",   color="mediumpurple")
+addProblem(folder="hc2-2016-dryrun-medium",     probid="Y_dry2",   depends=True,      runtime=1 , special_runtime="3,5",   color="mediumpurple")
 addProblem(folder="hc2-2016-dryrun-hard",       probid="Z_dry3",   depends=True,      runtime=1 , special_runtime="1,1",   color="indigo")
 
 # Main contest
