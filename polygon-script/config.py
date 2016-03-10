@@ -2,7 +2,7 @@
 # Local/selection contest 2015
 
 setPolygonContestId(3835)  # Needed to find the correct package file
-setDomjudgeContestId(6)
+setDomjudgeContestId(7)
 addLanguage("english")     # Call this method for every language you have statements in, and before calling add problem
 
 # Now here we list all problems:
@@ -32,7 +32,7 @@ addProblem(folder="hc2-2016-dryrun-hard",       probid="Z_dry3",   depends=True,
 
 # Main contest
 setPolygonContestId(3767)
-setDomjudgeContestId(7)
+setDomjudgeContestId(8)
 
 addProblem(folder="collective-mindsets-easy",   probid="A_mind1",  depends=False,     runtime=1 , special_runtime="1,1",   color="lemonchiffon")
 addProblem(folder="collective-mindsets-medium", probid="B_mind2",  depends=True,      runtime=1 , special_runtime="1,1",   color="yellow")
