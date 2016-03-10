@@ -31,7 +31,7 @@ setDomjudgeContestId(7)
 
 addProblem(folder="collective-mindsets-easy",   probid="A_mind1",  depends=False,     runtime=1 , special_runtime="1,1",   color="lemonchiffon")
 addProblem(folder="collective-mindsets-medium", probid="B_mind2",  depends=True,      runtime=1 , special_runtime="1,1",   color="yellow")
-addProblem(folder="collective-mindsets-hard",   probid="C_mind3",  depends="A_mind1", runtime=10, special_runtime="15,30", color="goldenrod")
+addProblem(folder="collective-mindsets-hard",   probid="C_mind3",  depends="A_mind1", runtime=10, special_runtime="15,30", color="goldenrod", compare="mind3")
 
 addProblem(folder="recover-polygon-easy",       probid="D_poly1",  depends=False,     runtime=2 , special_runtime="3,6",   color="lightblue")
 addProblem(folder="recover-polygon-medium",     probid="E_poly2",  depends=True,      runtime=2 , special_runtime="3,6",   color="skyblue")
@@ -45,35 +45,7 @@ addProblem(folder="hc2-2016-walls-easy",        probid="J_wall1",  depends=False
 addProblem(folder="hc2-2016-walls-medium",      probid="K_wall2",  depends=True,      runtime=15, special_runtime="22,45", color="limegreen")
 addProblem(folder="hc2-2016-walls-hard",        probid="L_wall3",  depends=True,      runtime=2 , special_runtime="3,6",   color="green")
 
-addProblem(folder="jigsaw-puzzle-easy",         probid="M_jiggy1", depends=False,     runtime=15, special_runtime="22,45", color="lightcoral", offline="tests/1")
-addProblem(folder="jigsaw-puzzle-medium",       probid="N_jiggy2", depends=True,      runtime=15, special_runtime="22,45", color="red",        offline="tests/1")
+addProblem(folder="jigsaw-puzzle-easy",         probid="M_jiggy1", depends=False,     runtime=15, special_runtime="22,45", color="lightcoral", offline="tests/1", compare="jiggy1")
+addProblem(folder="jigsaw-puzzle-medium",       probid="N_jiggy2", depends=True,      runtime=15, special_runtime="22,45", color="red",        offline="tests/1", compare="jiggy2")
 #addProblem(folder="jigsaw-puzzle-hard",       probid="O_jiggy3", depends=True,      runtime=15, special_runtime="22,45", color="darkred")
 
-if False:
-  addProblem(folder="fantastic-four-1",              probid="A_fant0",  depends=False, color="lightyellow", offline=3, runtime=1, special_runtime="2,2")
-  addProblem(folder="fantastic-four-2",              probid="B_fant1",  depends=False, color="lemonchiffon", run="fanfour2", runtime=2, special_runtime="7,7")
-  addProblem(folder="fantastic-four-3",              probid="C_fant2",  depends=True,  color="yellow",       run="fanfour3", runtime=1, special_runtime="2,7")
-  addProblem(folder="fantastic-four-4",              probid="D_fant3",  depends=True,  color="goldenrod",    run="fanfour4", runtime=2, special_runtime="3,7")
-
-  addProblem(folder="hc2-planet-destruction-easy",   probid="E_pland1", depends=False, color="lightblue", runtime=1, special_runtime="2,2")
-  addProblem(folder="hc2-planet-destruction-med",    probid="F_pland2", depends=True,  color="skyblue", runtime=2, special_runtime="7,18")
-  addProblem(folder="hc2-planet-destruction-hard",   probid="G_pland3", depends=True,  color="deepskyblue", runtime=2, special_runtime="7,5")
-
-  addProblem(folder="synchronizing-automata-easy",   probid="H_hgath1", depends=False, color="whitesmoke", runtime=1, special_runtime="2,2")
-  addProblem(folder="synchronizing-automata-medium", probid="I_hgath2", depends=True,  color="gainsboro", runtime=1, special_runtime="2,2")
-  addProblem(folder="synchronizing-automata-hard",   probid="J_hgath3", depends=True,  color="silver",       compare="sync3", runtime=1, special_runtime="2,2")
-
-  addProblem(folder="recognize-shape-easy",          probid="K_shape1", depends=False, color="palegreen", runtime=1, special_runtime="2,2")
-  addProblem(folder="recognize-shape-medium",        probid="L_shape2", depends=True,  color="limegreen", runtime=1, special_runtime="5,5")
-  addProblem(folder="recognize-shape-hard",          probid="M_shape3", depends=True,  color="green", runtime=1, special_runtime="5,5")
-
-  addProblem(folder="counting-numbers-easy",         probid="N_shiel1", depends=False, color="lightcoral", runtime=1, special_runtime="2,2")
-  addProblem(folder="counting-numbers-medium",       probid="O_shiel2", depends=True,  color="red", runtime=1, special_runtime="3,3")
-  addProblem(folder="counting-numbers-hard",         probid="P_shiel3", depends=True,  color="darkred", runtime=1, special_runtime="10,12")
-
-  # Dry run
-  setPolygonContestId(2441)
-  setDomjudgeContestId(3)
-  addProblem(folder="hc2-dryrun-easy",               probid="A_dry1",   depends=False, color="lavender", runtime=1, special_runtime="2,2")
-  addProblem(folder="hc2-dryrun-medium",             probid="B_dry2",   depends=True,  color="mediumpurple", runtime=1, special_runtime="2,2")
-  addProblem(folder="hc2-dryrun-hard",               probid="C_dry3",   depends=True,  color="indigo", runtime=1, special_runtime="2,2")
