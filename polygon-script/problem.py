@@ -54,7 +54,7 @@ class Problem:
 
 
   def __str__(self):
-    return "Problem %-30s (%-8s) depends: %-8s color: %s time: %-2s run: %-8s cmp: %-8s tests: %2d sample: %s" % (
+    return "Problem %-30s (%-8s) depends: %-8s color: %s time: %-2s run: %-8s cmp: %-8s tests: %3d sample: %s" % (
       self.name[0:30], self.probid, self.dependency, self.htmlcolor, self.runtime,
       self.run, self.compare, self.ntests, str(self.sampleio)
       )
@@ -155,7 +155,10 @@ class Problem:
     contzip.close()
     zipf.writestr("data.zip", tempfile.getvalue())
     tempfile.close()
-    return count == len(self.sampleio)
+    if self.offline is not None:
+        return count-1 == len(self.sampleio)
+    else:
+        return count == len(self.sampleio)
 
   def addIO(self, zipf):
     count = 0
